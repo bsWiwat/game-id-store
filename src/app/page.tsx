@@ -3,14 +3,8 @@ import { useEffect, useState } from "react";
 import CategoryList from "@/components/CategoryList";
 import ProductList from "@/components/ProductList";
 import Slider from "@/components/Slider";
+import { Product } from "@/models/Product";
 
-interface Product {
-  id: number;
-  name: string;
-  image: string;
-  price: number;
-  currency: string;
-}
 const HomePage = () => {
   const [products, setProducts] = useState<Product[]>([]); // กำหนดชนิดของ products เป็น array ของ Product
   useEffect(() => {
@@ -53,7 +47,7 @@ const HomePage = () => {
           <h1 className="text-2xl font-bold mb-6">New Products</h1>
           <div className="flex flex-wrap gap-10 justify-center mx-5">
             {/* map ข้อมูลแต่ละ product และส่งไปยัง Card component */}
-            {products.slice(0, 4).map((product) => (
+            {products.slice(0, 9).map((product) => (
               <ProductList key={product.id} product={product} />
             ))}
           </div>

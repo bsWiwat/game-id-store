@@ -3,14 +3,7 @@ import { useEffect, useState } from "react";
 import Filter from "@/components/Filter";
 import ProductList from "@/components/ProductList";
 import Slider from "@/components/Slider";
-
-interface Product {
-  id: number;
-  name: string;
-  image: string;
-  price: number;
-  currency: string;
-}
+import { Product } from "@/models/Product";
 
 const ListPage = () => {
   const [products, setProducts] = useState<Product[]>([]); // กำหนดชนิดของ products เป็น array ของ Product
@@ -25,9 +18,8 @@ const ListPage = () => {
   }, []);
   return (
     <>
+      <Slider />
       <div className="px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 relative">
-        {/* CAMPAIGN */}
-        <Slider />
         {/* Filter */}
         <Filter />
         {/* Products */}
@@ -41,7 +33,3 @@ const ListPage = () => {
 };
 
 export default ListPage;
-
-
-
-
