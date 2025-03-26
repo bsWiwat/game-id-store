@@ -1,51 +1,139 @@
 [
   {
-    "id": 6638,
+    "id": "id-6638",
     "name": "Genshin Impact",
-    "image": "/Card_Genshin.png",
+    "image": "/Card/Card_Genshin.png",
     "price": 953.23,
-    "currency": "฿"
+    "currency": "฿",
+    "category": "Genshin Impact",
+    "description": "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius possimus temporibus sit, odit officiis debitis molestias, in dolor saepe aliquid similique vero quo! Aliquid tenetur voluptatum officia iure qui. Sequi! Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corrupti distinctio nihil iure deleniti doloremque soluta, sed consequatur beatae odio consequuntur perspiciatis cum ducimus labore. Deleniti similique amet veniam perferendis ducimus?",
+
+    "gallery": [
+      "/ID_img/ID_genshin1.jpg",
+      "/ID_img/ID_genshin2.jpg",
+      "/ID_img/ID_genshin3.jpg",
+      "/ID_img/ID_genshin4.png"
+    ]
   },
   {
-    "id": 2760,
+    "id": "id-2760",
     "name": "Valorant",
-    "image": "/Card_valorant.png",
+    "image": "/Card/Card_valorant.png",
     "price": 799.99,
-    "currency": "฿"
+    "currency": "฿",
+    "category": "Valorant",
+    "description": "รายละเอียดไอดีเกม",
+    "gallery": [
+      "/ID_img/ID_valorant1.png",
+      "/ID_img/ID_valorant2.png",
+      "/ID_img/ID_valorant3.png",
+      "/ID_img/ID_valorant4.png",
+      "/ID_img/ID_valorant5.png"
+    ]
   },
   {
-    "id": 1201,
+    "id": "id-1201",
     "name": "Elden Ring",
-    "image": "/Card_Elden.jpg",
+    "image": "/Card/Card_Elden.jpg",
     "price": 1299.0,
-    "currency": "฿"
+    "currency": "฿",
+    "category": "Elden Ring",
+    "description": "รายละเอียดไอดีเกม",
+    "gallery": [
+      "/ID_img/ID_valorant1.png",
+      "/ID_img/ID_valorant2.png",
+      "/ID_img/ID_valorant3.png",
+      "/ID_img/ID_valorant4.png",
+      "/ID_img/ID_valorant5.png"
+    ]
   },
   {
-    "id": 6327,
+    "id": "id-6327",
     "name": "Cookie Run Kingdoms",
-    "image": "/Card_Cookie.png",
+    "image": "/Card/Card_Cookie.png",
     "price": 1036.8,
-    "currency": "฿"
+    "currency": "฿",
+    "category": "Cookie Run Kingdoms",
+    "description": "รายละเอียดไอดีเกม",
+    "gallery": [
+      "/ID_img/ID_cookie1.jpg",
+      "/ID_img/ID_cookie2.jpg",
+      "/ID_img/ID_cookie3.jpg",
+      "/ID_img/ID_cookie4.jpg",
+      "/ID_img/ID_cookie5.jpg"
+    ]
   },
   {
-    "id": 5791,
+    "id": "id-5791",
     "name": "Honkail Star Rail",
-    "image": "/Card_Honkai.png",
+    "image": "/Card/Card_Honkai.png",
     "price": 1399.68,
-    "currency": "฿"
+    "currency": "฿",
+    "category": "Honkail Star Rail",
+    "description": "รายละเอียดไอดีเกม",
+    "gallery": [
+      "/ID_img/ID_hokai1.png",
+      "/ID_img/ID_hokai2.png",
+      "/ID_img/ID_hokai3.png",
+      "/ID_img/ID_hokai4.png",
+      "/ID_img/ID_hokai5.png"
+    ]
   },
   {
-    "id": 2716,
+    "id": "id-2716",
     "name": "Marvel Rivals",
-    "image": "/Card_Marvel.png",
+    "image": "/Card/Card_Marvel.png",
     "price": 1056.24,
-    "currency": "฿"
+    "currency": "฿",
+    "category": "Marvel Rivals",
+    "description": "รายละเอียดไอดีเกม"
   },
   {
-    "id": 5075,
-    "name": "Polemon TCG",
-    "image": "/Card_Pokemon.jpg",
+    "id": "id-5075",
+    "name": "Pokemon TCG",
+    "image": "/Card/Card_Pokemon.jpg",
     "price": 2572.2,
-    "currency": "฿"
+    "currency": "฿",
+    "category": "Pokemon TCG",
+    "description": "รายละเอียดไอดีเกม",
+    "gallery": [
+      "/ID_img/ID_pokemon1.png",
+      "/ID_img/ID_pokemon2.png",
+      "/ID_img/ID_pokemon3.png",
+      "/ID_img/ID_pokemon4.png",
+      "/ID_img/ID_pokemon5.png"
+    ]
+  },
+  {
+    "id": "id-2219",
+    "name": "Legue of Legend",
+    "image": "/Card/Card_LOL.jpg",
+    "price": 3354.84,
+    "currency": "฿",
+    "category": "Legue of Legend",
+    "description": "รายละเอียดไอดีเกม",
+    "gallery": [
+      "/ID_img/ID_lol1.png",
+      "/ID_img/ID_lol2.png",
+      "/ID_img/ID_lol3.png",
+      "/ID_img/ID_lol4.png",
+      "/ID_img/ID_lol5.png"
+    ]
+  },
+  {
+    "id": "id-5265",
+    "name": "Arena of Valor",
+    "image": "/Card/Card_ROV.webp",
+    "price": 925.92,
+    "currency": "฿",
+    "category": "Arena of Valor",
+    "description": "รายละเอียดไอดีเกม",
+    "gallery": [
+      "/ID_img/ID_rov1.png",
+      "/ID_img/ID_rov2.png",
+      "/ID_img/ID_rov3.png",
+      "/ID_img/ID_rov4.png",
+      "/ID_img/ID_rov5.png"
+    ]
   }
 ]

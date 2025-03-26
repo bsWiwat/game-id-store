@@ -12,7 +12,7 @@ const CartModal = () => {
           <div className="text-center">Cart is empty</div>
         ) : (
           <>
-          <h2 className="text-xl">Shopping Cart</h2>
+            <h2 className="text-xl">Shopping Cart</h2>
             {/* List */}
             <div className="flex flex-col gap-8">
               {/* Item */}
@@ -84,7 +84,9 @@ const CartModal = () => {
                 <button className="rounded-md py-3 px-4 ring-1 ring-gray-300">
                   View Cart
                 </button>
-                <button className="rounded-md py-3 px-4 bg-black text-white">Check Out</button>
+                <button className="rounded-md py-3 px-4 bg-black text-white">
+                  Check Out
+                </button>
               </div>
             </div>
           </>
@@ -95,4 +97,3 @@ const CartModal = () => {
 };
 
 export default CartModal;
-

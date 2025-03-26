@@ -1,29 +1,21 @@
 import Image from "next/image";
-
-interface Product {
-  id: number; //แก้เป็น String
-  name: string;
-  image: string;
-  price: number;
-  currency: string;
-}
-
-interface CardProps {
-  product: Product;
-}
+import Link from "next/link";
+import { CardProps } from "@/models/Product";
 
 const ProductList: React.FC<CardProps> = ({ product }) => {
   return (
-    <>
+    <Link href={`/${product.id}`} className="block">
       <div className="w-[263px] h-[325px] bg-white shadow-lg flex flex-col justify-start rounded-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-[#f5f5f5]">
         {/* รูปภาพ */}
-        <Image
-          src={product.image}
-          alt={product.name}
-          width={263}
-          height={237}
-          className="w-[263px] h-[237px] object-cover object-top"
-        />
+        <div className="relative w-[263px] h-[237px]">
+          <Image
+            src={product.image}
+            alt={product.name}
+            fill
+            sizes="(max-width: 640px) 100vw, 263px"
+            className="object-cover object-top"
+          />
+        </div>
 
         {/* ข้อมูลเกม */}
         <div className="p-2 w-full">
@@ -40,7 +32,7 @@ const ProductList: React.FC<CardProps> = ({ product }) => {
           {/* Game ID */}
         </div>
       </div>
-    </>
+    </Link>
   );
 };
 
