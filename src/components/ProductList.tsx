@@ -7,13 +7,15 @@ const ProductList: React.FC<CardProps> = ({ product }) => {
     <Link href={`/${product.id}`} className="block">
       <div className="w-[263px] h-[325px] bg-white shadow-lg flex flex-col justify-start rounded-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-[#f5f5f5]">
         {/* รูปภาพ */}
-        <Image
-          src={product.image}
-          alt={product.name}
-          width={263}
-          height={237}
-          className="w-[263px] h-[237px] object-cover object-top"
-        />
+        <div className="relative w-[263px] h-[237px]">
+          <Image
+            src={product.image}
+            alt={product.name}
+            fill
+            sizes="(max-width: 640px) 100vw, 263px"
+            className="object-cover object-top"
+          />
+        </div>
 
         {/* ข้อมูลเกม */}
         <div className="p-2 w-full">

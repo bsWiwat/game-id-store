@@ -5,6 +5,7 @@
     "image": "/Card/Card_Genshin.png",
     "price": 953.23,
     "currency": "฿",
+    "category": "Genshin Impact",
     "description": "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius possimus temporibus sit, odit officiis debitis molestias, in dolor saepe aliquid similique vero quo! Aliquid tenetur voluptatum officia iure qui. Sequi! Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corrupti distinctio nihil iure deleniti doloremque soluta, sed consequatur beatae odio consequuntur perspiciatis cum ducimus labore. Deleniti similique amet veniam perferendis ducimus?",
 
     "gallery": [
@@ -20,6 +21,7 @@
     "image": "/Card/Card_valorant.png",
     "price": 799.99,
     "currency": "฿",
+    "category": "Valorant",
     "description": "รายละเอียดไอดีเกม",
     "gallery": [
       "/ID_img/ID_valorant1.png",
@@ -35,6 +37,7 @@
     "image": "/Card/Card_Elden.jpg",
     "price": 1299.0,
     "currency": "฿",
+    "category": "Elden Ring",
     "description": "รายละเอียดไอดีเกม",
     "gallery": [
       "/ID_img/ID_valorant1.png",
@@ -50,6 +53,7 @@
     "image": "/Card/Card_Cookie.png",
     "price": 1036.8,
     "currency": "฿",
+    "category": "Cookie Run Kingdoms",
     "description": "รายละเอียดไอดีเกม",
     "gallery": [
       "/ID_img/ID_cookie1.jpg",
@@ -65,6 +69,7 @@
     "image": "/Card/Card_Honkai.png",
     "price": 1399.68,
     "currency": "฿",
+    "category": "Honkail Star Rail",
     "description": "รายละเอียดไอดีเกม",
     "gallery": [
       "/ID_img/ID_hokai1.png",
@@ -79,14 +84,17 @@
     "name": "Marvel Rivals",
     "image": "/Card/Card_Marvel.png",
     "price": 1056.24,
-    "currency": "฿"
+    "currency": "฿",
+    "category": "Marvel Rivals",
+    "description": "รายละเอียดไอดีเกม"
   },
   {
     "id": "id-5075",
-    "name": "Polemon TCG",
+    "name": "Pokemon TCG",
     "image": "/Card/Card_Pokemon.jpg",
     "price": 2572.2,
     "currency": "฿",
+    "category": "Pokemon TCG",
     "description": "รายละเอียดไอดีเกม",
     "gallery": [
       "/ID_img/ID_pokemon1.png",
@@ -102,6 +110,7 @@
     "image": "/Card/Card_LOL.jpg",
     "price": 3354.84,
     "currency": "฿",
+    "category": "Legue of Legend",
     "description": "รายละเอียดไอดีเกม",
     "gallery": [
       "/ID_img/ID_lol1.png",
@@ -117,6 +126,7 @@
     "image": "/Card/Card_ROV.webp",
     "price": 925.92,
     "currency": "฿",
+    "category": "Arena of Valor",
     "description": "รายละเอียดไอดีเกม",
     "gallery": [
       "/ID_img/ID_rov1.png",
