@@ -32,7 +32,7 @@ export default function CartPage() {
                   <th className="border p-4 text-left">Price</th>
                   <th className="border p-4 text-left">Quantity</th>
                   <th className="border p-4 text-left">Subtotal</th>
-                  <th className="border p-4 text-left">Remove</th>
+                  <th className="border p-4 text-left"></th>
                 </tr>
               </thead>
               <tbody>

@@ -57,7 +57,7 @@ const CartModal = () => {
                 View Cart
               </button>
             </Link>
-            <Link href="/cart/checkout">
+            <Link href="/checkout">
               <button className="rounded-md py-2 px-4 bg-black text-white">
                 Check Out
               </button>
