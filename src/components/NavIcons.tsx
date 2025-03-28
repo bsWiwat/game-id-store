@@ -13,6 +13,7 @@ const NavIcons = () => {
   const [isNotiOpen, setIsNotiOpen] = useState(false);
   const { cart } = useCart();
   const { notifications } = useNotification();
+  const [hasReadNotifications, setHasReadNotifications] = useState(false);
 
   // ใช้ useRef เพื่อตรวจจับการคลิกนอก Notification
   const notiRef = useRef<HTMLDivElement>(null);
@@ -39,9 +40,18 @@ const NavIcons = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isNotiOpen]);
+  const toggleNotifications = () => {
+    setIsNotiOpen((prev) => !prev);
+    if (!hasReadNotifications) {
+      setHasReadNotifications(true);
+    }
+  };
 
   return (
-    <div className="flex items-center gap-4 xl:gap-6 relative">
+    <div
+      className="flex items-center gap-4 xl:gap-6 relative"
+      onClick={toggleNotifications}
+    >
       {/* Profile */}
       <Image
         src="/profile.png"
@@ -66,7 +76,7 @@ const NavIcons = () => {
           width={22}
           height={22}
         />
-        {notifications.length > 0 && (
+        {!hasReadNotifications && notifications.length > 0 && (
           <div className="absolute -top-2 -right-3 w-5 h-5 bg-red-500 text-white text-xs flex items-center justify-center rounded-full">
             {notifications.length}
           </div>
