@@ -1,25 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import CartModal from "./CartModal";
 import { useCart } from "@/components/CartContext";
+import LoginPopup from "./LoginPopup";
 
 const NavIcons = () => {
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { cart } = useCart(); // ดึงข้อมูลตะกร้าจาก context
-  const router = useRouter();
-
-  const isLoggedIn = false; // เปลี่ยนเป็นตรวจสอบ session หรือ state
 
   const handleProfile = () => {
-    if (!isLoggedIn) {
-      router.push("/login");
-    }
-    setIsProfileOpen((prev) => !prev);
+    setIsLoginOpen(true);
   };
 
   return (
@@ -33,14 +26,9 @@ const NavIcons = () => {
         className="cursor-pointer"
         onClick={handleProfile}
       />
-      {isProfileOpen && (
-        <div className="absolute p-4 rounded-md top-12 left-0 text-sm shadow-md bg-white z-20">
-          <Link href="/profile" className="block">
-            Profile
-          </Link>
-          <div className="mt-2 cursor-pointer text-red-500">Logout</div>
-        </div>
-      )}
+
+      {/* Login Popup */}
+      {isLoginOpen && <LoginPopup onClose={() => setIsLoginOpen(false)} />}
 
       {/* Notifications */}
       <Image

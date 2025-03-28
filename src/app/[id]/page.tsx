@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import ProductList from "@/components/ProductList";
 import { Product } from "@/models/Product";
 import { useCart } from "@/components/CartContext";
+import Link from "next/link";
 export default function ProductDetail() {
   const { id } = useParams();
   const { addToCart } = useCart();
@@ -45,9 +46,14 @@ export default function ProductDetail() {
             </p>
           </div>
           <div className="flex justify-between items-center w-1/2 mt-8 gap-4">
-            <button className="rounded-md bg-[#D99F2B] text-white py-3 px-4 w-">
-              Buy now
-            </button>
+            <Link href="/cart">
+              <button
+                className="rounded-md bg-[#D99F2B] text-white py-3 px-4 w- "
+                onClick={() => addToCart(product)}
+              >
+                Buy now
+              </button>
+            </Link>
             <button
               className="rounded-md bg-black text-white py-3 px-4"
               onClick={() => addToCart(product)}
