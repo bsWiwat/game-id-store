@@ -1,7 +1,6 @@
 "use client";
-
 import Image from "next/image";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, use } from "react";
 import CartModal from "./CartModal";
 import { useCart } from "@/components/CartContext";
 import { useNotification } from "@/components/NotificationContext";
@@ -12,8 +11,8 @@ const NavIcons = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isNotiOpen, setIsNotiOpen] = useState(false);
   const { cart } = useCart();
-  const { notifications } = useNotification();
-  const [hasReadNotifications, setHasReadNotifications] = useState(false);
+  const { notifications, markAsRead } = useNotification(); // ดึง markAsRead จาก useNotification
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
 
   // ใช้ useRef เพื่อตรวจจับการคลิกนอก Notification
   const notiRef = useRef<HTMLDivElement>(null);
@@ -40,19 +39,16 @@ const NavIcons = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isNotiOpen]);
-  const toggleNotifications = () => {
-    setIsNotiOpen((prev) => !prev);
-    if (!hasReadNotifications) {
-      setHasReadNotifications(true);
-    }
-  };
+
+  // ใช้ useEffect เพื่อนับจำนวนการแจ้งเตือนที่ยังไม่ได้อ่าน
+  useEffect(() => {
+    const unreadCount = notifications.filter((noti) => !noti.read).length;
+    setUnreadNotifications(unreadCount);
+  }, [notifications]);
 
   return (
-    <div
-      className="flex items-center gap-4 xl:gap-6 relative"
-      onClick={toggleNotifications}
-    >
-      {/* Profile */}
+    <div className="flex items-center gap-4 xl:gap-6 relative">
+      {/* Profile Icon */}
       <Image
         src="/profile.png"
         alt="Profile"
@@ -76,9 +72,9 @@ const NavIcons = () => {
           width={22}
           height={22}
         />
-        {!hasReadNotifications && notifications.length > 0 && (
+        {unreadNotifications > 0 && (
           <div className="absolute -top-2 -right-3 w-5 h-5 bg-red-500 text-white text-xs flex items-center justify-center rounded-full">
-            {notifications.length}
+            {unreadNotifications}
           </div>
         )}
       </div>
@@ -87,7 +83,7 @@ const NavIcons = () => {
       {isNotiOpen && (
         <div
           ref={notiRef}
-          className="absolute right-0 mt-2 translate-y-16 w-64 bg-white border shadow-lg rounded-lg p-2 transition-transform"
+          className="absolute right-0 mt-2 translate-y-24 w-64 bg-white border shadow-lg rounded-lg p-2 transition-transform"
         >
           <h3 className="text-sm font-bold mb-2">Notifications</h3>
           {notifications.length === 0 ? (
@@ -95,7 +91,13 @@ const NavIcons = () => {
           ) : (
             <ul className="text-sm">
               {notifications.map((noti) => (
-                <li key={noti.id} className="border-b last:border-none py-1">
+                <li
+                  key={noti.id}
+                  className={`border-b last:border-none py-1 ${
+                    noti.read ? "text-gray-400" : "text-black"
+                  }`}
+                  onClick={() => markAsRead(noti.id)} //คลิกข้อความเพื่อทำเครื่องหมายว่าอ่านแล้ว
+                >
                   🛒 {noti.message} <br />
                   <span className="text-gray-400 text-xs">
                     {noti.timestamp}
