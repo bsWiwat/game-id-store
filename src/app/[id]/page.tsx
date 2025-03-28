@@ -5,10 +5,10 @@ import ProductImages from "@/components/ProductImages";
 import { useEffect, useState } from "react";
 import ProductList from "@/components/ProductList";
 import { Product } from "@/models/Product";
-
+import { useCart } from "@/components/CartContext";
 export default function ProductDetail() {
   const { id } = useParams();
-  console.log(id);
+  const { addToCart } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
 
   useEffect(() => {
@@ -48,7 +48,10 @@ export default function ProductDetail() {
             <button className="rounded-md bg-[#D99F2B] text-white py-3 px-4 w-">
               Buy now
             </button>
-            <button className="rounded-md bg-black text-white py-3 px-4">
+            <button
+              className="rounded-md bg-black text-white py-3 px-4"
+              onClick={() => addToCart(product)}
+            >
               Add to Cart
             </button>
           </div>
