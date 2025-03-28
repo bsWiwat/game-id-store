@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/components/CartContext";
+import { useNotification } from "@/components/NotificationContext";
 
 export default function CheckoutPage() {
   const { cart } = useCart();
   const router = useRouter();
+  const { addNotification } = useNotification();
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -42,6 +44,9 @@ export default function CheckoutPage() {
       alert("กรุณายอมรับเงื่อนไขการใช้บริการ");
       return;
     }
+
+    addNotification(`Payment Success - Total: ฿${total.toFixed(2)}`);
+
     router.push("/success");
   };
 

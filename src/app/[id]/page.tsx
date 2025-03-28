@@ -16,7 +16,7 @@ export default function ProductDetail() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   // ตรวจสอบสถานะการล็อกอิน (สมมุติว่าใช้ session หรือ state)
-  const isLoggedIn = false; // แก้เป็น true หากมีระบบล็อกอินจริง
+  const isLoggedIn = true; // แก้เป็น true หากมีระบบล็อกอินจริง
 
   useEffect(() => {
     const fetchData = async () => {
