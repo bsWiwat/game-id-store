@@ -7,7 +7,7 @@ const ProductList: React.FC<CardProps> = ({ product }) => {
   const imageUrl =
     product.imageUrls && product.imageUrls.length > 0
       ? product.imageUrls[0]
-      : "/placeholder-image.png"; // Fallback image
+      : "/logo.png"; // Fallback image
 
   return (
     <Link href={`/${product.id}`} className="block">
