@@ -18,9 +18,16 @@ export async function GET() {
 // POST: Add a new product
 export async function POST(req: Request) {
   try {
-    const { name, price, imageUrl } = await req.json();
+    const {
+      productName,
+      price,
+      imageUrls,
+      categoryName,
+      shortDescription,
+      description,
+    } = await req.json();
 
-    if (!name || !price || !imageUrl) {
+    if (!productName || !price) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -28,9 +35,13 @@ export async function POST(req: Request) {
     }
 
     await addDoc(collection(db, "products"), {
-      name,
+      productName,
       price: parseFloat(price),
-      imageUrl,
+      imageUrls: imageUrls || ["no-data"],
+      categoryName: categoryName || "test",
+      shortDescription: shortDescription || "",
+      description: description || "",
+      isActive: true,
       createdAt: new Date(),
     });
 
@@ -45,7 +56,10 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
+
+
+
+
+
+
 }
-
-
-

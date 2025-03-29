@@ -36,10 +36,26 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const { name, price, imageUrl } = await req.json();
+    const {
+      productName,
+      price,
+      imageUrls,
+      categoryName,
+      shortDescription,
+      description,
+      isActive,
+    } = await req.json();
     const docRef = doc(db, "products", id);
 
-    await updateDoc(docRef, { name, price: parseFloat(price), imageUrl });
+    await updateDoc(docRef, {
+      productName,
+      price,
+      imageUrls,
+      categoryName,
+      shortDescription,
+      description,
+      isActive,
+    });
 
     return NextResponse.json(
       { message: "Product updated successfully!" },
@@ -76,6 +92,15 @@ export async function DELETE(
     );
   }
 }
+
+
+
+
+
+
+
+
+
 
 
 
