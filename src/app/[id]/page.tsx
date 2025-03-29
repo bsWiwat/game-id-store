@@ -14,6 +14,7 @@ export default function ProductDetail() {
   const { addToCart } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [productCategory, setProductCategory] = useState<Product[]>([]);
 
   // ตรวจสอบสถานะการล็อกอิน (สมมุติว่าใช้ session หรือ state)
   const isLoggedIn = true; // แก้เป็น true หากมีระบบล็อกอินจริง
@@ -106,8 +107,3 @@ export default function ProductDetail() {
     </>
   );
 }
-
-
-
-
-

@@ -26,10 +26,10 @@ const ProductList: React.FC<CardProps> = ({ product }) => {
 
         {/* Product Information */}
         <div className="p-2 w-full">
-          <p className="text-black font-bold text-lg">{product.productName}</p>
+          <p className="text-black font-bold text-lg">{product.categoryName}</p>
           {/* Game Name & Price */}
           <div className="flex justify-between items-center">
-            <p className="text-[#D99F2b] text-sm mt-1">Id: {product.id}</p>
+            <p className="text-[#D99F2b] text-sm mt-1">{product.productName}</p>
             <p className="text-[#D99F2b] text-lg">฿ {product.price}</p>
           </div>
         </div>
@@ -39,4 +39,3 @@ const ProductList: React.FC<CardProps> = ({ product }) => {
 };
 
 export default ProductList;
-

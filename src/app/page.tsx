@@ -55,7 +55,6 @@ const HomePage = () => {
             ))}
           </div>
         </div>
-        <AddProduct03 />
         <Logout />
       </div>
     </>
@@ -63,6 +62,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
-
-
