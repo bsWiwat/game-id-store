@@ -18,7 +18,7 @@ const ProductList: React.FC<CardProps> = ({ product }) => {
             src={imageUrl}
             alt={product.productName}
             fill
-            sizes="(max-width: 640px) 100vw, 263px"
+            sizes="(max-width: 640px) 100vw, 200px"
             className="object-cover object-top"
             priority // Optional: Use priority loading for the main image
           />

@@ -9,7 +9,7 @@ import AddProduct03 from "@/components/AddProduct03";
 import Logout from "@/components/Logout";
 
 const HomePage = () => {
-  const [products, setProducts] = useState<Product[]>([]); // กำหนดชนิดของ products เป็น array ของ Product
+  const [products, setProducts] = useState<Product[]>([]);
   useEffect(() => {
     const fetchProducts = async () => {
       // const res = await fetch("/data/products.json");

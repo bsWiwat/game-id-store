@@ -5,12 +5,18 @@ import ProductImages from "@/components/ProductImages";
 import { useEffect, useState } from "react";
 import ProductList from "@/components/ProductList";
 import { Product } from "@/models/Product";
+import { useCart } from "@/components/CartContext";
+import Link from "next/link";
+import LoginPopup from "@/components/LoginPopup";
 
 export default function ProductDetail() {
   const { id } = useParams();
-  console.log(id);
+  const { addToCart } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
-  const [productCategory, setProductCategory] = useState<Product[]>([]);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+
+  // ตรวจสอบสถานะการล็อกอิน (สมมุติว่าใช้ session หรือ state)
+  const isLoggedIn = true; // แก้เป็น true หากมีระบบล็อกอินจริง
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,6 +44,14 @@ export default function ProductDetail() {
     return <h1 className="text-center text-red-500">Product Not Found</h1>;
   }
 
+  const handleAddToCart = () => {
+    if (!isLoggedIn) {
+      setIsLoginOpen(true);
+    } else {
+      addToCart(product);
+    }
+  };
+
   return (
     <>
       <div className="px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 flex flex-col lg:flex-row gap-16 mt-12">
@@ -57,10 +71,18 @@ export default function ProductDetail() {
             <p className="text-lg">{product.description}</p>
           </div>
           <div className="flex justify-between items-center w-1/2 mt-8 gap-4">
-            <button className="rounded-md bg-[#D99F2B] text-white py-3 px-4 w-">
-              Buy now
-            </button>
-            <button className="rounded-md bg-black text-white py-3 px-4">
+            <Link href="/cart">
+              <button
+                className="rounded-md bg-[#D99F2B] text-white py-3 px-4"
+                onClick={handleAddToCart}
+              >
+                Buy now
+              </button>
+            </Link>
+            <button
+              className="rounded-md bg-black text-white py-3 px-4"
+              onClick={handleAddToCart}
+            >
               Add to Cart
             </button>
           </div>
@@ -78,6 +100,9 @@ export default function ProductDetail() {
             ))}
         </div>
       </div>
+
+      {/* Popup Login */}
+      {isLoginOpen && <LoginPopup onClose={() => setIsLoginOpen(false)} />}
     </>
   );
 }
