@@ -55,7 +55,7 @@ const Dashboard = () => {
       </div>
 
       <div className="bg-white p-6 rounded-md shadow">
-        <h2 className="text-lg font-bold mb-4">Sales Statistics</h2>
+        <h2 className="text-lg font-bold mb-4">Lastest Orders</h2>
       </div>
     </div>
   );

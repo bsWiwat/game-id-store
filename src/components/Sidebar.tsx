@@ -24,17 +24,7 @@ export default function Sidebar({ setSelectedPage }: SidebarProps) {
   const menuItems = [
     { name: "Dashboard", icon: <FaTachometerAlt />, path: "/admin" },
     { name: "Products", icon: <FaBox />, path: "/admin/productmanage" },
-    { name: "Orders", icon: <FaShoppingCart />, path: "/admin/orders" },
     { name: "Customers", icon: <FaUsers />, path: "/admin/customers" },
-    { name: "Statistics", icon: <FaChartBar />, path: "/admin/statistics" },
-    { name: "Reviews", icon: <FaStar />, path: "/admin/reviews" },
-    {
-      name: "Transactions",
-      icon: <FaMoneyCheckAlt />,
-      path: "/admin/transactions",
-    },
-    { name: "Sellers", icon: <FaStore />, path: "/admin/sellers" },
-    { name: "Hot Offers", icon: <FaTags />, path: "/admin/offers" },
     { name: "Settings", icon: <FaCog />, path: "/admin/settings" },
   ];
 

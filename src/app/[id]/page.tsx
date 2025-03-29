@@ -14,17 +14,29 @@ export default function ProductDetail() {
   const { addToCart } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [productCategory, setProductCategory] = useState<Product[]>([]);
 
   // ตรวจสอบสถานะการล็อกอิน (สมมุติว่าใช้ session หรือ state)
   const isLoggedIn = true; // แก้เป็น true หากมีระบบล็อกอินจริง
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch("/data/products.json");
-      const data: Product[] = await response.json();
-      console.log(data);
-      const foundProduct = data.find((p) => p.id === String(id));
-      setProduct(foundProduct || null);
+      try {
+        const response = await fetch(`/api/products/${id}`);
+        const data: Product = await response.json(); // Expecting a single product object
+        console.log(data);
+        setProduct(data || null); // Directly set the product
+
+        // Fetch products based on category
+        const productCategory = await fetch(
+          `/api/products/category/${data.categoryName}`
+        );
+        const categoryData: Product[] = await productCategory.json();
+        setProductCategory(categoryData || []); // Set the related products
+      } catch (error) {
+        console.error("Error fetching product:", error);
+        setProduct(null);
+      }
     };
     fetchData();
   }, [id]);
@@ -44,20 +56,20 @@ export default function ProductDetail() {
   return (
     <>
       <div className="px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 flex flex-col lg:flex-row gap-16 mt-12">
-        {/* รูปสินค้า */}
+        {/* Product Images */}
         <div className="w-full lg:w-1/2 lg:sticky top-20 h-max ">
-          <ProductImages gallery={product.gallery || []} />
+          <ProductImages gallery={product.imageUrls || []} />
         </div>
 
-        {/* ข้อมูลสินค้า */}
+        {/* Product Details */}
         <div className="w-full lg:w-1/2 flex flex-col justify-between">
           <div className="flex flex-col gap-8">
-            <h1 className="text-4xl font-bold">GAME-{product.id}</h1>
-            <p className="text-sm">{product.description}</p>
+            <h1 className="text-2xl font-bold">GAME-{product.id}</h1>
+            <p className="text-lg text-[#D99F2B]">Price: ฿ {product.price}</p>
             <div className="h-[2px] bg-gray-200" />
-            <p className="text-lg text-[#D99F2B]">
-              Price: {product.currency} {product.price}
-            </p>
+            <p className="text-sm">{product.shortDescription}</p>
+            <div className="h-[2px] bg-gray-200" />
+            <p className="text-lg">{product.description}</p>
           </div>
           <div className="flex justify-between items-center w-1/2 mt-8 gap-4">
             <Link href="/cart">
@@ -78,13 +90,15 @@ export default function ProductDetail() {
         </div>
       </div>
 
-      {/* Related Products */}
       <div className="mt-24 px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-32">
-        <h1 className="text-2xl px-12 font-bold mb-6">Related Products</h1>
-        <div className="flex flex-wrap gap-10 justify-start mx-5">
-          {product
-            ? [product].map((p) => <ProductList key={p.id} product={p} />)
-            : null}
+        <h1 className="text-2xl font-bold mb-6">Similar Products</h1>
+        <div className="flex flex-wrap gap-10 justify-center mx-5">
+          {productCategory
+            .filter((item) => item.id !== product.id) // Filter out the current product
+            .slice(0, 4)
+            .map((product) => (
+              <ProductList key={product.id} product={product} />
+            ))}
         </div>
       </div>
 

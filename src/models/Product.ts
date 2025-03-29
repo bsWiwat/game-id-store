@@ -1,12 +1,24 @@
+// export interface Product {
+//   id: string;
+//   name: string;
+//   image: string;
+//   price: number;
+//   currency: string;
+//   category: string;
+//   description: string;
+//   gallery: string[];
+// }
+
 export interface Product {
   id: string;
-  name: string;
-  image: string;
+  productName: string;
+  imageUrls: string[];
   price: number;
-  currency: string;
-  category: string;
+  categoryName: string;
+  shortDescription: string;
   description: string;
-  gallery: string[];
+  isActive: boolean;
+  createdAt: Date;
 }
 
 export interface CardProps {
@@ -21,3 +33,7 @@ export interface FilterProps {
   products: Product[];
   setFilteredProducts: (products: Product[]) => void;
 }
+
+
+
+
