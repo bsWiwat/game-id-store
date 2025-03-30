@@ -1,40 +1,79 @@
+"use client";
+import { useEffect, useState } from "react";
 import Filter from "@/components/Filter";
 import ProductList from "@/components/ProductList";
-import Image from "next/image";
+import Slider from "@/components/Slider";
+import Pagination from "@/components/Pagination";
+import { Product } from "@/models/Product";
+
+const itemPerPage = 8;
 
 const ListPage = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true); // เพิ่ม state สำหรับโหลดข้อมูล
+  const [error, setError] = useState<string | null>(null); // เพิ่ม state สำหรับข้อผิดพลาด
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch("/api/products");
+        if (!res.ok) {
+          throw new Error("Failed to fetch products");
+        }
+        const data: Product[] = await res.json();
+        setProducts(data);
+        setFilteredProducts(data);
+      } catch (err) {
+        setError((err as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filteredProducts]);
+
+  const totalPages = Math.ceil(filteredProducts.length / itemPerPage);
+  const displayProducts = filteredProducts.slice(
+    (currentPage - 1) * itemPerPage,
+    currentPage * itemPerPage
+  );
+
   return (
     <>
-      <div className="px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 relative">
-        {/* CAMPAIGN */}
-        <div className="hidden bg-[#e2d2b2] px-4 sm:flex justify-between h-64">
-          <div className="w-2/3 flex flex-col items-center justify-center gap-8">
-            <h1 className="text-4xl font-semibold leading-[48px] text-gray-700">
-              Grab up to 50% off on
-              <br /> Selected Products
-            </h1>
-            <button className="rounded-3xl bg-[#EA3737] text-white w-max py-3 px-5 text-sm">
-              Buy Now
-            </button>
+      <Slider />
+      <div className="px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-32 relative">
+        <Filter products={products} setFilteredProducts={setFilteredProducts} />
+        <h1 className="mt-12 text-xl font-semibold mb-4">All Product List!</h1>
+
+        {loading ? (
+          <p className="text-gray-500 text-center">Loading products...</p>
+        ) : error ? (
+          <p className="text-red-500 text-center">Error: {error}</p>
+        ) : displayProducts.length > 0 ? (
+          <div className="flex flex-wrap gap-10 justify-center mx-5">
+            {displayProducts.map((product) => (
+              <ProductList key={product.id} product={product} />
+            ))}
           </div>
-          <div className="relative w-1/3">
-            <Image
-              src="/logo.png"
-              alt=""
-              fill
-              className="object-contain"
-            />
-          </div>
-        </div>
-        {/* Filter */}
-        <Filter />
-        {/* Products */}
-        <h1 className="mt-12 text-xl font-semibold">For you!</h1>
-        <ProductList />
+        ) : (
+          <p className="text-gray-500 text-center">No products found.</p>
+        )}
       </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        setCurrentPage={setCurrentPage}
+      />
     </>
   );
 };
 
 export default ListPage;
-

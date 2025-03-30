@@ -1,152 +1,43 @@
 import Link from "next/link";
 import Image from "next/image";
 
+const logos = [
+  { src: "/Logo_Genshin.png", alt: "Logo Genshin", link: "/list?cat=genshin" },
+  { src: "/Logo_Cookie.png", alt: "Logo Cookie", link: "/list?cat=cookie" },
+  { src: "/Logo_Rov.png", alt: "Logo ROv", link: "/list?cat=rov" },
+  { src: "/Logo_LOL.png", alt: "Logo LOL", link: "/list?cat=lol" },
+  {
+    src: "/Logo_HonkaiSR.png",
+    alt: "Logo HonkaiSR",
+    link: "/list?cat=honkaiSR",
+  },
+  { src: "/Logo_Pokemon.png", alt: "Logo Pokemon", link: "/list?cat=pokemon" },
+];
+
 const CategoryList = () => {
   return (
-    <>
-      <div className="px-4 overflow-x-scroll scrollbar-hide">
-        <div className="flex  gap-4 md:gap-8 ">
+    <div className="px-4 overflow-x-scroll scrollbar-hide py-2">
+      <div className="flex gap-4 md:gap-8">
+        {logos.map((logo, index) => (
           <Link
-            href="/list?cat=test"
-            className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/4 xl:w-1/6"
+            key={index}
+            href={logo.link}
+            className="flex-shrink-0 sm:w-1/2 lg:w-1/4 xl:w-1/6"
           >
-            <div className="relative bg-slate-100 w-full h-96">
+            <div className="relative bg-white min-w-[263px] min-h-[148px] outline outline-[#D99F2b] flex items-center justify-center">
               <Image
-                src="https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=800"
-                alt=""
-                fill
-                sizes="20vw"
-                className="object-cover"
+                src={logo.src}
+                alt={logo.alt}
+                width={263}
+                height={148}
+                className="-w-full h-auto max-w-[263px] max-h-[148px] object-cover"
               />
             </div>
-            <h1 className="mt-8 font-light text-clip tracking-wide">
-              Category Name
-            </h1>
           </Link>
-          <Link
-            href="/list?cat=test"
-            className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/4 xl:w-1/6"
-          >
-            <div className="relative bg-slate-100 w-full h-96">
-              <Image
-                src="https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=800"
-                alt=""
-                fill
-                sizes="20vw"
-                className="object-cover"
-              />
-            </div>
-            <h1 className="mt-8 font-light text-clip tracking-wide">
-              Category Name
-            </h1>
-          </Link>
-          <Link
-            href="/list?cat=test"
-            className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/4 xl:w-1/6"
-          >
-            <div className="relative bg-slate-100 w-full h-96">
-              <Image
-                src="https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=800"
-                alt=""
-                fill
-                sizes="20vw"
-                className="object-cover"
-              />
-            </div>
-            <h1 className="mt-8 font-light text-clip tracking-wide">
-              Category Name
-            </h1>
-          </Link>
-          <Link
-            href="/list?cat=test"
-            className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/4 xl:w-1/6"
-          >
-            <div className="relative bg-slate-100 w-full h-96">
-              <Image
-                src="https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=800"
-                alt=""
-                fill
-                sizes="20vw"
-                className="object-cover"
-              />
-            </div>
-            <h1 className="mt-8 font-light text-clip tracking-wide">
-              Category Name
-            </h1>
-          </Link>
-          <Link
-            href="/list?cat=test"
-            className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/4 xl:w-1/6"
-          >
-            <div className="relative bg-slate-100 w-full h-96">
-              <Image
-                src="https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=800"
-                alt=""
-                fill
-                sizes="20vw"
-                className="object-cover"
-              />
-            </div>
-            <h1 className="mt-8 font-light text-clip tracking-wide">
-              Category Name
-            </h1>
-          </Link>
-          <Link
-            href="/list?cat=test"
-            className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/4 xl:w-1/6"
-          >
-            <div className="relative bg-slate-100 w-full h-96">
-              <Image
-                src="https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=800"
-                alt=""
-                fill
-                sizes="20vw"
-                className="object-cover"
-              />
-            </div>
-            <h1 className="mt-8 font-light text-clip tracking-wide">
-              Category Name
-            </h1>
-          </Link>
-          <Link
-            href="/list?cat=test"
-            className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/4 xl:w-1/6"
-          >
-            <div className="relative bg-slate-100 w-full h-96">
-              <Image
-                src="https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=800"
-                alt=""
-                fill
-                sizes="20vw"
-                className="object-cover"
-              />
-            </div>
-            <h1 className="mt-8 font-light text-clip tracking-wide">
-              Category Name
-            </h1>
-          </Link>
-          <Link
-            href="/list?cat=test"
-            className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/4 xl:w-1/6"
-          >
-            <div className="relative bg-slate-100 w-full h-96">
-              <Image
-                src="https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=800"
-                alt=""
-                fill
-                sizes="20vw"
-                className="object-cover"
-              />
-            </div>
-            <h1 className="mt-8 font-light text-clip tracking-wide">
-              Category Name
-            </h1>
-          </Link>
-        </div>
+        ))}
       </div>
-    </>
+    </div>
   );
 };
 
 export default CategoryList;
-

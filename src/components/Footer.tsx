@@ -10,7 +10,12 @@ const Footer = () => {
           {/* Left */}
           <div className="w-full md:w-1/2 lg:w-1/4 flex flex-col gap-8">
             <Link href="/">
-              <Image src="/logo.png" alt="" width={180} height={180} />
+              <Image
+                src="/Game_ID_Store_Logo.svg"
+                alt=""
+                width={180}
+                height={180}
+              />
             </Link>
             {/* <span className="">gameId@gmai.com</span>
             <span className="">+66 88-8888888</span> */}

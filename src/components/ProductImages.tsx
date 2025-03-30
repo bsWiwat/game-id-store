@@ -2,64 +2,77 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { ProductImagesProps } from "@/models/Product";
 
-const images = [
-  {
-    id: 1,
-    url: "https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=800",
-  },
-  {
-    id: 2,
-    url: "https://images.pexels.com/photos/1021693/pexels-photo-1021693.jpeg?auto=compress&cs=tinysrgb&w=800",
-  },
-  {
-    id: 3,
-    url: "https://images.pexels.com/photos/1658747/pexels-photo-1658747.jpeg?auto=compress&cs=tinysrgb&w=800",
-  },
-  {
-    id: 4,
-    url: "https://images.pexels.com/photos/2728255/pexels-photo-2728255.jpeg?auto=compress&cs=tinysrgb&w=800",
-  },
-];
-
-const ProductImages = () => {
+const ProductImages: React.FC<ProductImagesProps> = ({ gallery }) => {
   const [index, setIndex] = useState(0);
+  const [zoom, setZoom] = useState({ x: "0%", y: "0%" });
+  const [isZoomVisible, setIsZoomVisible] = useState(false);
+
+  const handleMouseMove = (event: React.MouseEvent) => {
+    const container = event.currentTarget.getBoundingClientRect();
+    const offsetX = event.clientX - container.left;
+    const offsetY = event.clientY - container.top;
+
+    const pointerX = (offsetX * 100) / container.width;
+    const pointerY = (offsetY * 100) / container.height;
+
+    setZoom({ x: `${pointerX}%`, y: `${pointerY}%` });
+    setIsZoomVisible(true);
+  };
+
+  const handleMouseOut = () => {
+    setIsZoomVisible(false);
+  };
 
   return (
-    <>
-      <div className="">
-        <div className="h-[500px] relative ">
+    <div className="">
+      <div className="h-[500px] relative ">
+        <div
+          className="relative w-full h-full"
+          onMouseMove={handleMouseMove}
+          onMouseOut={handleMouseOut}
+        >
           <Image
-            src={images[index].url}
-            alt=""
+            src={gallery[index]}
+            alt={`Product Image ${index}`}
             fill
             sizes="50vw"
-            className="object-cover rounded-md"
+            className="object-cover rounded-md object-center"
           />
-        </div>
-        <div className="flex justify-between gap-4 mt-8">
-          {images.map((img, i) => (
+          {isZoomVisible && (
             <div
-              key={img.id}
-              className="w-1/4 h-32 relative gap-4 mt-8 cursor-pointer"
-              onClick={() => setIndex(i)}
-            >
-              <Image
-                src={img.url}
-                alt=""
-                fill
-                sizes="50vw"
-                className="object-cover rounded-md"
-              />
-            </div>
-          ))}
+              className="absolute inset-0 bg-black"
+              style={{
+                backgroundImage: `url(${gallery[index]})`,
+                backgroundSize: "200%",
+                backgroundPosition: `${zoom.x} ${zoom.y}`,
+                pointerEvents: "none",
+              }}
+            ></div>
+          )}
         </div>
       </div>
-    </>
+      <div className="flex justify-between gap-4 mt-8">
+        {gallery.map((img, i) => (
+          <div
+            key={i}
+            className={`w-1/4 h-32 relative cursor-pointer ${
+              index === i ? "border-2 border-blue-500" : ""
+            }`}
+            onClick={() => setIndex(i)}
+          >
+            <Image
+              src={img}
+              alt={`Thumbnail ${i}`}
+              fill
+              className="object-cover rounded-md"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 
 export default ProductImages;
-
-
-
