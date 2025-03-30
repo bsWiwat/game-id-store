@@ -1,41 +1,40 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 
-const SuccessPage = () => {
+export default function SuccessPage() {
+  const router = useRouter();
+
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-      <div className="max-w-2xl bg-white shadow-lg rounded-lg p-10 text-center">
-        {/* Success Icon */}
-        <div className="mb-8">
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded-lg shadow-lg text-center w-96">
+        {/* ไอคอนเช็คถูก */}
+        <div className="flex justify-center">
           <Image
-            src="/success.png" // Replace with your success icon path
-            alt=""
-            width={150}
-            height={150}
-            className="mx-auto"
+            src="/checkmark.png"
+            alt="Checkmark"
+            width={50}
+            height={50}
+            priority
           />
         </div>
 
-        {/* Success Message */}
-        <h1 className="text-4xl font-bold text-[#D99F2B] mb-6">Order Successful!</h1>
-        <p className="text-lg text-gray-600 mb-8">
-          Thank you for your purchase.
-          <br></br> 
-          Your receipt will send to your email address.
+        {/* ข้อความแสดงผล */}
+        <h1 className="text-2xl font-bold mt-4 m-10">Payment Success!</h1>
+        <p className="text-lg mt-2">Thanks for using our service</p>
+        <p className="text-gray-500 text-sm mt-1 m-10">
+          Your receipt will be sent to your email address
         </p>
 
-        {/* Back to Home Button */}
-        <Link href="/">
-          <button className="bg-[#D99F2B] text-white px-8 py-3 text-lg rounded-lg">
-            Back to Homepage
-          </button>
-        </Link>
+        {/* ปุ่มกลับไปหน้าแรก */}
+        <button
+          onClick={() => router.push("/")}
+          className="mt-6 px-6 py-2 bg-[#D99F2B] text-white font-bold rounded-lg"
+        >
+          Back to Home
+        </button>
       </div>
     </div>
   );
-};
-
-export default SuccessPage;
+}

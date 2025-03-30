@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 const slides = [
   {
     id: 1,
-    title: "Spacial Offer",
+    title: "Special Offer",
     description: "Sale! Up to 50% off!",
     img: "https://m.media-amazon.com/images/M/MV5BZmQwMjQ2ZTUtZmM5MC00MTdkLWIxYzgtODU1NzQ4Zjg4NmMxXkEyXkFqcGc@._V1_.jpg",
     url: "/",
@@ -15,7 +15,7 @@ const slides = [
   },
   {
     id: 2,
-    title: "Spacial Offer",
+    title: "Special Offer",
     description: "Sale! Up to 50% off!",
     img: "https://m.media-amazon.com/images/M/MV5BM2E3MWQyMzItZWFjNC00Y2E2LWI2ZjEtNDI2ZDU5YmU4ZTkwXkEyXkFqcGc@._V1_.jpg",
     url: "/",
@@ -23,7 +23,7 @@ const slides = [
   },
   {
     id: 3,
-    title: "Spacial Offer",
+    title: "Special Offer",
     description: "Sale! Up to 50% off!",
     img: "https://m.media-amazon.com/images/M/MV5BNDliNDJhNzAtM2UyZS00NTgyLTg5NzYtM2FhNjBmYTBkOGQ4XkEyXkFqcGc@._V1_.jpg",
     url: "/",
@@ -102,11 +102,3 @@ const Slider = () => {
 };
 
 export default Slider;
-
-
-
-
-
-
-
-

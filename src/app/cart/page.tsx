@@ -1,63 +1,142 @@
-'use client';
+"use client";
 
-import React, { useEffect } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useCart } from '../../context/CartContext';
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import useUserId from "@/hooks/useUserId";
+import { fetchCart } from "@/utils/fetchCart";
 
-const CartPage = () => {
-  const { setTotalPrice } = useCart();
-
-  // sample cart items(add dynamic data later!!)
-  const cartItems = [
-    { id: 1, name: 'Product name 1', price: 500, image: 'https://images.pexels.com/photos/1658747/pexels-photo-1658747.jpeg?auto=compress&cs=tinysrgb&w=800' },
-    { id: 2, name: 'Product name 2', price: 500, image: 'https://images.pexels.com/photos/1658747/pexels-photo-1658747.jpeg?auto=compress&cs=tinysrgb&w=800' },
-  ];
-
-  const totalPrice = cartItems.reduce((total, item) => total + item.price, 0);
+export default function CartPage() {
+  const userId = useUserId();
+  const [cart, setCart] = useState<
+    {
+      id: string;
+      categoryName: string;
+      shortDescription: string;
+      description: string;
+      productName: string;
+      price: number;
+      coverImageUrl?: string;
+      imageUrls: string[];
+      createdAt: Date;
+      isActive: boolean;
+    }[]
+  >([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setTotalPrice(totalPrice); // Set the total price in the context
-  }, [totalPrice, setTotalPrice]);
+    if (userId) {
+      fetchCart(userId)
+        .then(setCart)
+        .finally(() => setLoading(false));
+    }
+  }, [userId]);
+
+  const removeFromCart = async (productId: string) => {
+    try {
+      const response = await fetch(`/api/cart/${userId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId }),
+      });
+
+      if (response.ok) {
+        setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
+      }
+    } catch (error) {
+      console.error("Error removing item:", error);
+    }
+  };
+
+  if (loading) {
+    return <p className="text-center">Loading cart...</p>;
+  }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
-        <h1 className="text-2xl text-[#D99F2B] font-semibold mb-4">Your Shopping Cart</h1>
-        <div className="h-96 overflow-y-scroll">
-          {cartItems.map((item) => (
-            <div key={item.id} className="flex items-center border-b py-4">
-              <Image
-                src={item.image}
-                alt={item.name}
-                width={80}
-                height={80}
-                className="rounded-md"
-              />
-              <div className="ml-4 flex-1">
-                <h2 className="text-lg font-medium">{item.name}</h2>
-                <p className="text-gray-600">฿{item.price}</p>
+    <div className="px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 mt-12">
+      <h1 className="text-2xl font-bold text-[#D99F2B] mb-6">Cart</h1>
+
+      {cart.length === 0 ? (
+        <p className="text-gray-500">Your cart is empty.</p>
+      ) : (
+        <div className="flex flex-col lg:flex-row lg:justify-between gap-8">
+          <div className="lg:w-2/3">
+            <table className="w-full border-collapse border border-gray-300">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="border p-4 text-left">Product</th>
+                  <th className="border p-4 text-left">Category</th>
+                  <th className="border p-4 text-left">Price</th>
+                  <th className="border p-4 text-left"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {cart.map((item) => (
+                  <tr key={item.id} className="border">
+                    <td className="border p-4 flex items-center gap-4">
+                      <div className="w-16 h-16 relative flex-shrink-0">
+                        <Image
+                          src={item.coverImageUrl || "/logo.png"}
+                          alt={item.productName}
+                          layout="fill"
+                          objectFit="cover"
+                          className="rounded-md"
+                        />
+                        {item.coverImageUrl && (
+                          <Image
+                            src={item.coverImageUrl}
+                            alt={item.coverImageUrl}
+                            layout="fill"
+                            objectFit="cover"
+                            className="rounded-md"
+                          />
+                        )}
+                      </div>
+                      <span>{item.productName}</span>
+                      <span>{item.productName}</span>
+                    </td>
+                    <td className="border p-4">{item.categoryName}</td>
+                    <td className="border p-4">฿{item.price.toFixed(2)}</td>
+                    <td className="border p-4 text-center">
+                      <button
+                        className="bg-red-500 text-white px-3 py-1 rounded-full"
+                        onClick={() => removeFromCart(item.id)}
+                      >
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="lg:w-1/3">
+            <div className="p-6 border rounded-lg shadow-md bg-white">
+              <h2 className="text-xl font-bold mb-4">Cart Totals</h2>
+              <div className="flex justify-between mb-2">
+                <span>Subtotal</span>
+                <span>
+                  ฿{cart.reduce((acc, item) => acc + item.price, 0).toFixed(2)}
+                </span>
               </div>
-              <button className="text-red-500 hover:text-red-700">Remove</button>
+              <div className="flex justify-between font-bold text-lg">
+                <span>Total</span>
+                <span>
+                  ฿{cart.reduce((acc, item) => acc + item.price, 0).toFixed(2)}
+                </span>
+              </div>
+
+              <Link href="/checkout">
+                <button className="mt-4 w-full bg-[#D99F2B] text-white py-3 rounded-md text-lg font-bold">
+                  Proceed to Checkout
+                </button>
+              </Link>
             </div>
-          ))}
-        </div>
-        <div className="mt-6 border-t pt-4">
-          <div className="flex justify-between items-center">
-            <span className="text-lg font-medium">Total:</span>
-            <span className="text-lg font-semibold text-[#000000]">฿{totalPrice}</span>
           </div>
         </div>
-        <div className="mt-6 text-right">
-          <Link href="/checkout">
-            <button className="bg-[#D99F2B] text-white px-6 py-2 rounded-lg">
-              Proceed to Checkout
-            </button>
-          </Link>
-        </div>
-      </div>
+      )}
     </div>
   );
-};
+}
 
-export default CartPage;
