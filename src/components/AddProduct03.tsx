@@ -32,7 +32,6 @@ const AddProduct = () => {
     fetchCategories();
   }, []);
 
-  // อัปโหลดรูปทั้งหมดพร้อมกัน
   const handleAddImageUrl = async (files: FileList | null) => {
     if (!files || files.length === 0) {
       alert("Please select images!");

@@ -21,6 +21,7 @@ export async function POST(req: Request) {
     const {
       productName,
       price,
+      coverImageUrl,
       imageUrls,
       categoryName,
       shortDescription,
@@ -37,6 +38,7 @@ export async function POST(req: Request) {
     await addDoc(collection(db, "products"), {
       productName,
       price: parseFloat(price),
+      coverImageUrl: coverImageUrl || "no-data",
       imageUrls: imageUrls || ["no-data"],
       categoryName: categoryName || "test",
       shortDescription: shortDescription || "",
