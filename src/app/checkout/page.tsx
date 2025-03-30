@@ -1,16 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/components/CartContext";
 import { useNotification } from "@/components/NotificationContext";
-
+import { Product } from "@/models/Product";
 export default function CheckoutPage() {
   const { cart } = useCart();
   const router = useRouter();
   const { addNotification } = useNotification();
+
+  const [products, setProducts] = useState<Product[]>([]);
+
+  // ดึงข้อมูลสินค้าจาก API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("/api/products");
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  // แมตช์สินค้าใน cart กับข้อมูล API
+  const cartItems = cart.map((cartItem) => {
+    const product = products.find((p) => p.id === cartItem.id);
+    return product
+      ? {
+          ...product,
+          quantity: cartItem.quantity,
+          image: product.coverImageUrl, // ใช้ coverImageUrl เป็นรูปหลัก
+        }
+      : { ...cartItem, productName: "Product not found", price: 0, image: "" };
+  });
+
+  // คำนวณยอดรวม
+  const subtotal = cartItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
+  const total = subtotal;
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -21,12 +56,6 @@ export default function CheckoutPage() {
     paymentMethod: "credit-card",
     termsAccepted: false,
   });
-
-  const subtotal = cart.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0
-  );
-  const total = subtotal;
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -62,29 +91,29 @@ export default function CheckoutPage() {
             <thead>
               <tr className="bg-gray-100">
                 <th className="border p-4 text-left">Product</th>
-                <th className="border p-4 text-left">Quantity</th>
+                <th className="border p-4 text-left">Category</th>
                 <th className="border p-4 text-left">Subtotal</th>
               </tr>
             </thead>
             <tbody>
-              {cart.map((item) => (
+              {cartItems.map((item) => (
                 <tr key={item.id} className="border">
                   <td className="border p-4 flex items-center gap-4">
                     <div className="w-16 h-16 relative flex-shrink-0">
-                      <Image
-                        src={item.image}
-                        alt={item.name}
-                        layout="fill"
-                        objectFit="cover"
-                        className="rounded-md"
-                      />
+                      {item.coverImageUrl && (
+                        <Image
+                          src={item.coverImageUrl}
+                          alt={item.productName}
+                          layout="fill"
+                          objectFit="cover"
+                          className="rounded-md"
+                        />
+                      )}
                     </div>
-                    <span>{item.name}</span>
+                    <span>{item.productName}</span>
                   </td>
-                  <td className="border p-4">{item.quantity}</td>
-                  <td className="border p-4">
-                    {item.currency} {(item.price * item.quantity).toFixed(2)}
-                  </td>
+                  <td className="border p-4">{item.categoryName}</td>
+                  <td className="border p-4">฿{item.price.toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
