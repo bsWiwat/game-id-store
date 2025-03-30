@@ -14,6 +14,7 @@ const CartModal = ({ userId }: { userId: string }) => {
       description: string;
       productName: string;
       price: number;
+      coverImageUrl?: string;
       imageUrls: string[];
       createdAt: Date;
       isActive: boolean;
@@ -51,30 +52,24 @@ const CartModal = ({ userId }: { userId: string }) => {
 
       {loading ? (
         <p className="text-center text-gray-500">Loading...</p>
-      ) : error ? (
-        <p className="text-red-500 text-center">Error: {error}</p>
       ) : cart.length === 0 ? (
         <div className="text-center text-gray-500">Your cart is empty</div>
       ) : (
         <div className="flex flex-col gap-4">
           {cart.map((item) => {
-            const product = getProductDetails(item.id);
-            return product ? (
+            return item ? (
               <div key={item.id} className="flex gap-4">
                 <Image
-                  src={product.coverImageUrl}
-                  alt={product.id}
+                  src={item.coverImageUrl || "/logo.png"}
+                  alt={item.id}
                   width={64}
                   height={80}
                   className="object-cover rounded-md"
                 />
                 <div className="flex flex-col justify-between w-full">
                   <div>
-                    <h3 className="font-semibold">{product.productName}</h3>
-                    <p className="text-sm text-[#D99F2B]">฿ {product.price}</p>
-                    <p className="text-xs text-gray-500">
-                      Qty: {item.quantity}
-                    </p>
+                    <h3 className="font-semibold">{item.productName}</h3>
+                    <p className="text-sm text-[#D99F2B]">฿ {item.price}</p>
                   </div>
                   <button
                     className="text-red-500 text-sm"
@@ -109,5 +104,10 @@ const CartModal = ({ userId }: { userId: string }) => {
 };
 
 export default CartModal;
+
+
+
+
+
 
 

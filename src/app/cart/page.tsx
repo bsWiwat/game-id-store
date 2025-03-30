@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import useUserId from "@/hooks/useUserId";
@@ -17,6 +16,7 @@ export default function CartPage() {
       description: string;
       productName: string;
       price: number;
+      coverImageUrl?: string;
       imageUrls: string[];
       createdAt: Date;
       isActive: boolean;
@@ -71,12 +71,12 @@ export default function CartPage() {
                 </tr>
               </thead>
               <tbody>
-                {cartItems.map((item) => (
+                {cart.map((item) => (
                   <tr key={item.id} className="border">
                     <td className="border p-4 flex items-center gap-4">
                       <div className="w-16 h-16 relative flex-shrink-0">
                         <Image
-                          src={item.imageUrls[0] || "/logo.png"}
+                          src={item.coverImageUrl || "/logo.png"}
                           alt={item.productName}
                           layout="fill"
                           objectFit="cover"

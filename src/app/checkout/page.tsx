@@ -6,7 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 import useUserId from "@/hooks/useUserId";
 import { useNotification } from "@/components/NotificationContext";
-import { Product } from "@/models/Product";
 export default function CheckoutPage() {
   const router = useRouter();
   const { addNotification } = useNotification();
@@ -20,6 +19,7 @@ export default function CheckoutPage() {
       description: string;
       productName: string;
       price: number;
+      coverImageUrl?: string;
       imageUrls: string[];
       createdAt: Date;
       isActive: boolean;
@@ -120,7 +120,7 @@ export default function CheckoutPage() {
                     <td className="border p-4 flex items-center gap-4">
                       <div className="w-16 h-16 relative flex-shrink-0">
                         <Image
-                          src={item.imageUrls[0] || "/logo.png"}
+                          src={item.coverImageUrl || "/logo.png"}
                           alt={item.productName}
                           layout="fill"
                           objectFit="cover"
@@ -129,9 +129,7 @@ export default function CheckoutPage() {
                       </div>
                       <span>{item.productName}</span>
                     </td>
-                    <td className="border p-4">
-                      ฿ {(item.price).toFixed(2)}
-                    </td>
+                    <td className="border p-4">฿ {item.price.toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -244,4 +242,5 @@ export default function CheckoutPage() {
     </div>
   );
 }
+
 

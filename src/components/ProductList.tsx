@@ -8,7 +8,7 @@ const ProductList: React.FC<CardProps> = ({ product }) => {
     product.coverImageUrl && product.coverImageUrl.length > 0
       ? product.coverImageUrl
       : product.imageUrls.length > 0
-      ? product.imageUrls[0]
+      ? product.coverImageUrl
       : "/logo.png";
 
   return (

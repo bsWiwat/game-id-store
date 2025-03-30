@@ -14,6 +14,7 @@ export const fetchCart = async (userId: string) => {
       description: Product.description,
       productName: Product.productName,
       price: Product.price,
+      coverImageUrl: Product.coverImageUrl || Product.imageUrls[0] || "/logo.png",
       imageUrls: Product.imageUrls || [],
       createdAt: new Date(Product.createdAt),
       isActive: Product.isActive,
