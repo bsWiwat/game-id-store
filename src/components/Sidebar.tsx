@@ -1,26 +1,11 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
-import {
-  FaTachometerAlt,
-  FaBox,
-  FaShoppingCart,
-  FaUsers,
-  FaChartBar,
-  FaStar,
-  FaMoneyCheckAlt,
-  FaStore,
-  FaTags,
-  FaCog,
-} from "react-icons/fa";
-import { Dispatch, SetStateAction } from "react";
+import { usePathname } from "next/navigation"; // ใช้เช็คหน้า
+import { FaTachometerAlt, FaBox, FaUsers, FaCog } from "react-icons/fa";
 
-interface SidebarProps {
-  setSelectedPage: Dispatch<SetStateAction<string>>;
-}
+export default function Sidebar() {
+  const pathname = usePathname(); // ดึง path ปัจจุบัน
 
-export default function Sidebar({ setSelectedPage }: SidebarProps) {
-  const [active, setActive] = useState("Dashboard");
   const menuItems = [
     { name: "Dashboard", icon: <FaTachometerAlt />, path: "/admin" },
     { name: "Products", icon: <FaBox />, path: "/admin/productmanage" },
@@ -36,9 +21,8 @@ export default function Sidebar({ setSelectedPage }: SidebarProps) {
           <Link key={item.name} href={item.path}>
             <div
               className={`flex items-center p-3 rounded-md cursor-pointer transition-all hover:bg-gray-700 ${
-                active === item.name ? "bg-gray-700" : ""
+                pathname === item.path ? "bg-gray-700" : ""
               }`}
-              onClick={() => setActive(item.name)}
             >
               <span className="mr-3 text-lg">{item.icon}</span>
               {item.name}
