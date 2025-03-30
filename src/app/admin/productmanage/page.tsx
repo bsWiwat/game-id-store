@@ -4,14 +4,19 @@ import Image from "next/image";
 import AddProduct from "@/components/AddProduct03";
 import Link from "next/link";
 import { Product } from "@/models/Product";
-
+import Filter from "@/components/Filter";
 const ProductManage = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchProducts();
   }, []);
+
+  useEffect(() => {
+    setFilteredProducts(products);
+  }, [products]);
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -25,6 +30,7 @@ const ProductManage = () => {
       setLoading(false);
     }
   };
+
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this product?")) return;
     try {
@@ -40,7 +46,9 @@ const ProductManage = () => {
       <h1 className="text-2xl font-bold mb-4 text-[#D99F2B]">
         Product Management
       </h1>
-      <AddProduct />
+      <AddProduct fetchProducts={fetchProducts} />
+      <Filter products={products} setFilteredProducts={setFilteredProducts} />
+
       {loading ? (
         <p>Loading products...</p>
       ) : (
@@ -56,7 +64,7 @@ const ProductManage = () => {
             </tr>
           </thead>
           <tbody>
-            {products.map((product) => (
+            {filteredProducts.map((product) => (
               <tr key={product.id} className="border">
                 <td className="border p-2">
                   <Image
@@ -69,9 +77,11 @@ const ProductManage = () => {
                 </td>
                 <td className="border p-2">{product.categoryName}</td>
                 <td className="border p-2">{product.productName}</td>
-                <td className="border p-2">{product.isActive ? "1" : "0"}</td>
+                <td className="border p-2 text-center">
+                  {product.isActive ? "1" : "0"}
+                </td>
                 <td className="border p-2">฿ {product.price}</td>
-                <td className="border p-2 flex gap-2">
+                <td className="border p-2 flex gap-2 justify-center">
                   <Link href={`/edit-product/${product.id}`}>
                     <button className="bg-[#D99F2B] text-white px-3 py-1 rounded">
                       Edit

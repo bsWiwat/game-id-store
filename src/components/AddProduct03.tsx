@@ -2,7 +2,10 @@
 import { uploadImage } from "@/utils/uploadImage";
 import { useEffect, useState } from "react";
 
-const AddProduct = () => {
+interface AddProductProps {
+  fetchProducts: () => void;
+}
+const AddProduct = ({ fetchProducts }: AddProductProps) => {
   const [loading, setLoading] = useState(false);
   const [imageUrls, setImageUrls] = useState<(File | string)[]>([]);
   const [coverImageUrl, setCoverImageUrl] = useState("");
@@ -99,7 +102,7 @@ const AddProduct = () => {
           price,
           imageUrls,
           coverImageUrl,
-          category: categoryToUse,
+          categoryName: categoryToUse,
           shortDescription,
           description,
           isActive,
@@ -118,6 +121,7 @@ const AddProduct = () => {
       setIsActive(true);
       setImageUrls([]);
       setCoverImageUrl("");
+      fetchProducts();
     } catch (error) {
       console.error("Error:", error);
     } finally {
