@@ -3,45 +3,77 @@ import { useEffect, useState } from "react";
 import Filter from "@/components/Filter";
 import ProductList from "@/components/ProductList";
 import Slider from "@/components/Slider";
+import Pagination from "@/components/Pagination";
+import { Product } from "@/models/Product";
 
-interface Product {
-  id: number;
-  name: string;
-  image: string;
-  price: number;
-  currency: string;
-}
+const itemPerPage = 8;
 
 const ListPage = () => {
-  const [products, setProducts] = useState<Product[]>([]); // กำหนดชนิดของ products เป็น array ของ Product
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true); // เพิ่ม state สำหรับโหลดข้อมูล
+  const [error, setError] = useState<string | null>(null); // เพิ่ม state สำหรับข้อผิดพลาด
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const res = await fetch("/data/products.json");
-      const data: Product[] = await res.json(); // กำหนดให้ data เป็นประเภท Product[]
-      setProducts(data);
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch("/api/products");
+        if (!res.ok) {
+          throw new Error("Failed to fetch products");
+        }
+        const data: Product[] = await res.json();
+        setProducts(data);
+        setFilteredProducts(data);
+      } catch (err) {
+        setError((err as Error).message);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchProducts();
   }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filteredProducts]);
+
+  const totalPages = Math.ceil(filteredProducts.length / itemPerPage);
+  const displayProducts = filteredProducts.slice(
+    (currentPage - 1) * itemPerPage,
+    currentPage * itemPerPage
+  );
+
   return (
     <>
-      <div className="px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 relative">
-        {/* CAMPAIGN */}
-        <Slider />
-        {/* Filter */}
-        <Filter />
-        {/* Products */}
-        <h1 className="mt-12 text-xl font-semibold">For you!</h1>
-        {products.slice(0, 4).map((product) => (
-          <ProductList key={product.id} product={product} />
-        ))}
+      <Slider />
+      <div className="px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-32 relative">
+        <Filter products={products} setFilteredProducts={setFilteredProducts} />
+        <h1 className="mt-12 text-xl font-semibold mb-4">All Product List!</h1>
+
+        {loading ? (
+          <p className="text-gray-500 text-center">Loading products...</p>
+        ) : error ? (
+          <p className="text-red-500 text-center">Error: {error}</p>
+        ) : displayProducts.length > 0 ? (
+          <div className="flex flex-wrap gap-10 justify-center mx-5">
+            {displayProducts.map((product) => (
+              <ProductList key={product.id} product={product} />
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500 text-center">No products found.</p>
+        )}
       </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        setCurrentPage={setCurrentPage}
+      />
     </>
   );
 };
 
 export default ListPage;
-
-
-
-

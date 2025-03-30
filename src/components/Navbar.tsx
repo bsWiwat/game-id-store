@@ -12,7 +12,12 @@ const Navbar = () => {
         <div className="h-full flex items-center justify-between md:hidden">
           <Link href="/">
             <div className="text-2xl tracking-wide"></div>
-            <Image src="/logo.png" alt="" width={70} height={0} />
+            <Image
+              src="/Game_ID_Store_Logo.svg"
+              alt=""
+              width={70}
+              height={70}
+            />
           </Link>
           <Menu />
         </div>
@@ -25,7 +30,7 @@ const Navbar = () => {
                 src="/Game_ID_Store_Logo.svg"
                 alt=""
                 width={70}
-                height={0}
+                height={70}
               />
               <div className="text-2xl tracking-wide ml-3"></div>
             </Link>
@@ -33,7 +38,7 @@ const Navbar = () => {
               <Link href="/" className=" hover:-[#d99f2b]">
                 Homepage
               </Link>
-              <Link href="/">Shop</Link>
+              <Link href="/list">Shop</Link>
               <Link href="/">Deals</Link>
               <Link href="/">About</Link>
               <Link href="/">Contract</Link>
