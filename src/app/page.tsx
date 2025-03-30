@@ -55,7 +55,7 @@ const HomePage = () => {
             ))}
           </div>
         </div>
-        <Logout />
+        {/*<Logout />*/}
       </div>
     </>
   );

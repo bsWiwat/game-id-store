@@ -1,14 +1,39 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/components/CartContext";
+import { Product } from "@/models/Product";
 
 export default function CartPage() {
   const { cart, removeFromCart } = useCart();
+  const [products, setProducts] = useState<Product[]>([]);
+
+  // ดึงข้อมูลสินค้าจาก API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("/api/products");
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  // แมตช์ข้อมูลสินค้าเข้ากับ cart
+  const cartItems = cart.map((cartItem) => {
+    const product = products.find((p) => p.id === cartItem.id);
+    return product
+      ? { ...product, quantity: cartItem.quantity }
+      : { ...cartItem, name: "Product not found", price: 0, image: "" };
+  });
 
   // คำนวณยอดรวม
-  const subtotal = cart.reduce(
+  const subtotal = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
   );
@@ -18,8 +43,7 @@ export default function CartPage() {
     <div className="px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 mt-12">
       <h1 className="text-2xl font-bold text-[#D99F2B] mb-6">Cart</h1>
 
-      {/* ตรวจสอบว่าตะกร้าว่างหรือไม่ */}
-      {cart.length === 0 ? (
+      {cartItems.length === 0 ? (
         <p className="text-gray-500">Your cart is empty.</p>
       ) : (
         <div className="flex flex-col lg:flex-row lg:justify-between gap-8">
@@ -36,36 +60,27 @@ export default function CartPage() {
                 </tr>
               </thead>
               <tbody>
-                {cart.map((item) => (
+                {cartItems.map((item) => (
                   <tr key={item.id} className="border">
-                    {/* Product */}
                     <td className="border p-4 flex items-center gap-4">
                       <div className="w-16 h-16 relative flex-shrink-0">
-                        <Image
-                          src={item.image}
-                          alt={item.name}
-                          layout="fill"
-                          objectFit="cover"
-                          className="rounded-md"
-                        />
+                        {item.coverImageUrl && (
+                          <Image
+                            src={item.coverImageUrl}
+                            alt={item.coverImageUrl}
+                            layout="fill"
+                            objectFit="cover"
+                            className="rounded-md"
+                          />
+                        )}
                       </div>
-                      <span>{item.name}</span>
+                      <span>{item.productName}</span>
                     </td>
-
-                    {/* Price */}
-                    <td className="border p-4">
-                      {item.currency} {item.price.toFixed(2)}
-                    </td>
-
-                    {/* Quantity */}
+                    <td className="border p-4">฿{item.price.toFixed(2)}</td>
                     <td className="border p-4">{item.quantity}</td>
-
-                    {/* Subtotal */}
                     <td className="border p-4">
-                      {item.currency} {(item.price * item.quantity).toFixed(2)}
+                      ฿{(item.price * item.quantity).toFixed(2)}
                     </td>
-
-                    {/* Remove Button */}
                     <td className="border p-4 text-center">
                       <button
                         className="bg-red-500 text-white px-3 py-1 rounded-full"
@@ -92,8 +107,6 @@ export default function CartPage() {
                 <span>Total</span>
                 <span>฿{total.toFixed(2)}</span>
               </div>
-
-              {/* Checkout Button */}
               <Link href="/checkout">
                 <button className="mt-4 w-full bg-[#D99F2B] text-white py-3 rounded-md text-lg font-bold">
                   Proceed to Checkout
