@@ -1,16 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { useCart } from "@/components/CartContext";
+import useUserId from "@/hooks/useUserId";
 import { useNotification } from "@/components/NotificationContext";
 
 export default function CheckoutPage() {
-  const { cart } = useCart();
   const router = useRouter();
   const { addNotification } = useNotification();
+  const userId = useUserId();
+
+  const [cart, setCart] = useState<
+    {
+      id: string;
+      categoryName: string;
+      shortDescription: string;
+      description: string;
+      productName: string;
+      price: number;
+      imageUrls: string[];
+      createdAt: Date;
+      isActive: boolean;
+    }[]
+  >([]);
+  const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -22,8 +37,17 @@ export default function CheckoutPage() {
     termsAccepted: false,
   });
 
+  useEffect(() => {
+    if (userId) {
+      fetch(`/api/cart/${userId}`)
+        .then((res) => res.json())
+        .then(setCart)
+        .finally(() => setLoading(false));
+    }
+  }, [userId]);
+
   const subtotal = cart.reduce(
-    (acc, item) => acc + item.price * item.quantity,
+    (acc, item) => acc + item.price,
     0
   );
   const total = subtotal;
@@ -38,17 +62,39 @@ export default function CheckoutPage() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.termsAccepted) {
       alert("กรุณายอมรับเงื่อนไขการใช้บริการ");
       return;
     }
 
-    addNotification(`Payment Success - Total: ฿${total.toFixed(2)}`);
+    try {
+      console.log("Placing order with data", cart, formData,  userId, total);
+      const response = await fetch(`/api/orders`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          cartItems: cart,
+          totalAmount: total,
+          paymentMethod: formData.paymentMethod.toString(),
+        }),
+      });
 
-    router.push("/success");
+      if (!response.ok) throw new Error("Order failed");
+
+      addNotification(`Payment Success - Total: ฿${total.toFixed(2)}`);
+      router.push("/success");
+    } catch (error) {
+      console.error("Error placing order:", error);
+      alert("Error placing order. Please try again.");
+    }
   };
+
+  if (loading) {
+    return <p className="text-center text-gray-500">Loading cart...</p>;
+  }
 
   return (
     <div className="px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 mt-12">
@@ -58,37 +104,39 @@ export default function CheckoutPage() {
         {/* Left Side: Cart Details */}
         <div className="lg:w-2/3">
           <h2 className="text-xl font-bold mb-4">Cart Details</h2>
-          <table className="w-full border-collapse border border-gray-300">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border p-4 text-left">Product</th>
-                <th className="border p-4 text-left">Quantity</th>
-                <th className="border p-4 text-left">Subtotal</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cart.map((item) => (
-                <tr key={item.id} className="border">
-                  <td className="border p-4 flex items-center gap-4">
-                    <div className="w-16 h-16 relative flex-shrink-0">
-                      <Image
-                        src={item.image}
-                        alt={item.name}
-                        layout="fill"
-                        objectFit="cover"
-                        className="rounded-md"
-                      />
-                    </div>
-                    <span>{item.name}</span>
-                  </td>
-                  <td className="border p-4">{item.quantity}</td>
-                  <td className="border p-4">
-                    {item.currency} {(item.price * item.quantity).toFixed(2)}
-                  </td>
+          {cart.length === 0 ? (
+            <p className="text-gray-500">Your cart is empty.</p>
+          ) : (
+            <table className="w-full border-collapse border border-gray-300">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="border p-4 text-left">Product</th>
+                  <th className="border p-4 text-left">Subtotal</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {cart.map((item) => (
+                  <tr key={item.id} className="border">
+                    <td className="border p-4 flex items-center gap-4">
+                      <div className="w-16 h-16 relative flex-shrink-0">
+                        <Image
+                          src={item.imageUrls[0] || "/logo.png"}
+                          alt={item.productName}
+                          layout="fill"
+                          objectFit="cover"
+                          className="rounded-md"
+                        />
+                      </div>
+                      <span>{item.productName}</span>
+                    </td>
+                    <td className="border p-4">
+                      ฿ {(item.price).toFixed(2)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
 
         {/* Right Side: Checkout Form */}
@@ -196,3 +244,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
+

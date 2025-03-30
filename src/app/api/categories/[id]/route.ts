@@ -7,7 +7,7 @@ export async function GET(
   request: Request,
   { params }: { params: { categoryName: string } }
 ) {
-  const { categoryName } = params;
+  const { categoryName } = await params;
 
   try {
     console.log("Fetching products for category:", categoryName);
@@ -22,7 +22,7 @@ export async function GET(
       ...doc.data(),
     }));
 
-    return NextResponse.json(products);
+    return NextResponse.json(products, { status: 200 });
   } catch (error) {
     console.error("Error fetching products:", error);
     return NextResponse.json(
