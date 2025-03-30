@@ -5,6 +5,7 @@ import ProductList from "@/components/ProductList";
 import Slider from "@/components/Slider";
 import { Product } from "@/models/Product";
 import Link from "next/link";
+import LogoutButton from "@/components/LogoutButton";
 
 const HomePage = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -52,6 +53,8 @@ const HomePage = () => {
               <ProductList key={product.id} product={product} />
             ))}
           </div>
+          {/*Logout Button*/}
+          <LogoutButton />
         </div>
       </div>
     </>

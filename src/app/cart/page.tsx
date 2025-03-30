@@ -93,7 +93,6 @@ export default function CartPage() {
                         )}
                       </div>
                       <span>{item.productName}</span>
-                      <span>{item.productName}</span>
                     </td>
                     <td className="border p-4">{item.categoryName}</td>
                     <td className="border p-4">฿{item.price.toFixed(2)}</td>
@@ -139,4 +138,3 @@ export default function CartPage() {
     </div>
   );
 }
-
