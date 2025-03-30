@@ -11,7 +11,7 @@ const AddProduct = () => {
   const [price, setPrice] = useState("");
   const [shortDescription, setShortDescription] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
+  const [categoryName, setCategoryName] = useState("");
   const [newCategory, setNewCategory] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [categories, setCategories] = useState<
@@ -89,7 +89,7 @@ const AddProduct = () => {
         });
       }
 
-      const categoryToUse = newCategory || category;
+      const categoryToUse = newCategory || categoryName;
 
       const response = await fetch("/api/products", {
         method: "POST",
@@ -99,7 +99,7 @@ const AddProduct = () => {
           price,
           imageUrls,
           coverImageUrl,
-          category: categoryToUse,
+          categoryName: categoryToUse,
           shortDescription,
           description,
           isActive,
@@ -113,7 +113,7 @@ const AddProduct = () => {
       setPrice("");
       setShortDescription("");
       setDescription("");
-      setCategory("");
+      setCategoryName("");
       setNewCategory("");
       setIsActive(true);
       setImageUrls([]);
@@ -143,9 +143,9 @@ const AddProduct = () => {
       />
       <div className="mb-2">
         <select
-          value={category}
+          value={categoryName}
           onChange={(e) => {
-            setCategory(e.target.value);
+            setCategoryName(e.target.value);
           }}
           className="block border p-2 w-full"
         >
@@ -159,14 +159,14 @@ const AddProduct = () => {
         </select>
       </div>
 
-      {category === "add-new" && (
+      {categoryName === "add-new" && (
         <input
           type="text"
           placeholder="Or add new category"
           value={newCategory}
           onChange={(e) => {
             setNewCategory(e.target.value);
-            setCategory("add-new");
+            setCategoryName("add-new");
           }}
           className="block border p-2 mt-2 w-full"
         />
@@ -265,3 +265,7 @@ const AddProduct = () => {
 };
 
 export default AddProduct;
+
+
+
+

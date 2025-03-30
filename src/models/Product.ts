@@ -11,6 +11,21 @@ export interface Product {
   createdAt: Date;
 }
 
+export interface Category {
+  id: string;
+  categoryName: string;
+}
+
+export interface ProductRequest {
+  productName: string;
+  price: number;
+  coverImageUrl: string;
+  imageUrls: string[];
+  categoryName: string;
+  shortDescription: string;
+  description: string;
+}
+
 export interface CardProps {
   product: Product;
 }
@@ -23,3 +38,4 @@ export interface FilterProps {
   products: Product[];
   setFilteredProducts: (products: Product[]) => void;
 }
+
