@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Product } from "@/models/Product";
 import { FilterProps } from "@/models/Product";
 
@@ -6,9 +6,27 @@ const Filter = ({ products, setFilteredProducts }: FilterProps) => {
   const [filters, setFilters] = useState({
     minPrice: "",
     maxPrice: "",
-    category: "",
+    categoryName: "",
     sort: "",
   });
+
+  const [categories, setCategories] = useState<
+    { id: string; categoryName: string }[]
+  >([]);
+
+  // ดึงหมวดหมู่จาก API
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("/api/categories");
+        const data = await response.json();
+        setCategories(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
@@ -16,21 +34,24 @@ const Filter = ({ products, setFilteredProducts }: FilterProps) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
   };
 
+  useEffect(() => {
+    filterProducts();
+  }, [filters, products]);
+
   const filterProducts = () => {
     let filtered = [...products];
 
-    if (filters.minPrice) {
+    const minPrice = parseFloat(filters.minPrice) || 0;
+    const maxPrice = parseFloat(filters.maxPrice) || Number.MAX_VALUE;
+
+    filtered = filtered.filter(
+      (p) => p.price >= minPrice && p.price <= maxPrice
+    );
+
+    if (filters.categoryName) {
       filtered = filtered.filter(
-        (p) => p.price >= parseFloat(filters.minPrice)
+        (p) => p.categoryName === filters.categoryName
       );
-    }
-    if (filters.maxPrice) {
-      filtered = filtered.filter(
-        (p) => p.price <= parseFloat(filters.maxPrice)
-      );
-    }
-    if (filters.category) {
-      filtered = filtered.filter((p) => p.category === filters.category);
     }
 
     if (filters.sort) {
@@ -53,50 +74,48 @@ const Filter = ({ products, setFilteredProducts }: FilterProps) => {
     <div className="mt-12 flex justify-between">
       <div className="flex gap-6 flex-wrap">
         <input
-          type="text"
+          type="number"
           name="minPrice"
-          placeholder="min price"
+          placeholder="Min Price"
           onChange={handleChange}
           className="text-xs rounded-2xl pl-2 w-24 ring-1 ring-gray-400"
         />
         <input
-          type="text"
+          type="number"
           name="maxPrice"
-          placeholder="max price"
+          placeholder="Max Price"
           onChange={handleChange}
           className="text-xs rounded-2xl pl-2 w-24 ring-1 ring-gray-400"
         />
         <select
-          name="category"
+          name="categoryName"
           onChange={handleChange}
           className="py-2 px-4 rounded-2xl text-xs font-medium bg-gray-100"
         >
           <option value="">Category</option>
-          <option value="Arena of Valor">Arena of Valor</option>
-          <option value="Cookie Run Kingdoms">Cookie Run Kingdoms</option>
-          <option value="Elden Ring">Elden Ring</option>
-          <option value="Genshin Impact">Genshin Impact</option>
-          <option value="Honkai Star Rail">Honkai Star Rail</option>
-          <option value="Legue of Legend">Legue of Legend</option>
-          <option value="Marvel Rivals">Marvel Rivals</option>
-          <option value="Pokemon TCG">Pokemon TCG</option>
-          <option value="Valorant">Valorant</option>
+          {categories.length > 0 ? (
+            categories.map((cat) => (
+              <option key={cat.id} value={cat.categoryName}>
+                {cat.categoryName}
+              </option>
+            ))
+          ) : (
+            <option disabled>Loading...</option>
+          )}
         </select>
       </div>
       <div className="flex flex-wrap gap-6">
-        <div>
-          <select
-            name="sort"
-            onChange={handleChange}
-            className="py-2 px-4 rounded-2xl text-xs font-medium bg-white ring-1 ring-gray-400"
-          >
-            <option value="">Sort By</option>
-            <option value="asc price">Price (low to high)</option>
-            <option value="desc price">Price (high to low)</option>
-            <option value="asc lastUpdated">Newest</option>
-            <option value="desc lastUpdated">Oldest</option>
-          </select>
-        </div>
+        <select
+          name="sort"
+          onChange={handleChange}
+          className="py-2 px-4 rounded-2xl text-xs font-medium bg-white ring-1 ring-gray-400"
+        >
+          <option value="">Sort By</option>
+          <option value="asc price">Price (low to high)</option>
+          <option value="desc price">Price (high to low)</option>
+          <option value="asc lastUpdated">Newest</option>
+          <option value="desc lastUpdated">Oldest</option>
+        </select>
         <button
           onClick={filterProducts}
           className="bg-[#D99F2B] text-white py-2 px-4 rounded-2xl text-xs"

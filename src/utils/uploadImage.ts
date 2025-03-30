@@ -17,4 +17,3 @@ export const uploadImage = async (image: File): Promise<string> => {
     );
   });
 };
-

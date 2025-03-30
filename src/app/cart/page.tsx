@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import useUserId from "@/hooks/useUserId";
@@ -64,12 +65,13 @@ export default function CartPage() {
               <thead>
                 <tr className="bg-gray-100">
                   <th className="border p-4 text-left">Product</th>
+                  <th className="border p-4 text-left">Category</th>
                   <th className="border p-4 text-left">Price</th>
                   <th className="border p-4 text-left"></th>
                 </tr>
               </thead>
               <tbody>
-                {cart.map((item) => (
+                {cartItems.map((item) => (
                   <tr key={item.id} className="border">
                     <td className="border p-4 flex items-center gap-4">
                       <div className="w-16 h-16 relative flex-shrink-0">
@@ -80,10 +82,21 @@ export default function CartPage() {
                           objectFit="cover"
                           className="rounded-md"
                         />
+                        {item.coverImageUrl && (
+                          <Image
+                            src={item.coverImageUrl}
+                            alt={item.coverImageUrl}
+                            layout="fill"
+                            objectFit="cover"
+                            className="rounded-md"
+                          />
+                        )}
                       </div>
                       <span>{item.productName}</span>
+                      <span>{item.productName}</span>
                     </td>
-                    <td className="border p-4">฿ {item.price.toFixed(2)}</td>
+                    <td className="border p-4">{item.categoryName}</td>
+                    <td className="border p-4">฿{item.price.toFixed(2)}</td>
                     <td className="border p-4 text-center">
                       <button
                         className="bg-red-500 text-white px-3 py-1 rounded-full"

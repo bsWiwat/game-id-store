@@ -2,10 +2,14 @@
 import { uploadImage } from "@/utils/uploadImage";
 import { useEffect, useState } from "react";
 
-const AddProduct = () => {
+interface AddProductProps {
+  fetchProducts: () => void;
+}
+const AddProduct = ({ fetchProducts }: AddProductProps) => {
   const [loading, setLoading] = useState(false);
   const [imageUrls, setImageUrls] = useState<(File | string)[]>([]);
-  const [image, setImage] = useState<File | null>(null);
+  const [coverImageUrl, setCoverImageUrl] = useState("");
+  const [coverImageIndex, setCoverImageIndex] = useState<number | null>(null);
   const [productName, setProductName] = useState("");
   const [price, setPrice] = useState("");
   const [shortDescription, setShortDescription] = useState("");
@@ -23,42 +27,64 @@ const AddProduct = () => {
       try {
         const response = await fetch("/api/categories");
         const data = await response.json();
-        setCategories(data); // Assuming the API returns an array of category names
+        setCategories(data);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
     };
-
     fetchCategories();
   }, []);
 
-  const handleAddImageUrl = async () => {
-    if (!image) {
-      alert("Please upload an image!");
-      return;
-    }
-
-    // Upload the image and get the URL
-    const imageUrl = await uploadImage(image);
-    console.log("Image URL:", imageUrl);
-    setImageUrls((prev) => [...prev, imageUrl]); // Add the uploaded image URL to the images array
-    setImage(null); // Reset the image input
-  };
-
-  const handleAddProduct = async () => {
-    if (!productName || !price || imageUrls.length === 0) {
-      alert("Please fill all fields and upload at least one image!");
+  const handleAddImageUrl = async (files: FileList | null) => {
+    if (!files || files.length === 0) {
+      alert("Please select images!");
       return;
     }
 
     setLoading(true);
+    try {
+      const uploadedImages = await Promise.all(
+        Array.from(files).map(async (file) => await uploadImage(file))
+      );
 
+      setImageUrls((prev) => [...prev, ...uploadedImages]);
+      if (coverImageIndex === null) setCoverImageIndex(0);
+    } catch (error) {
+      console.error("Error uploading images:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCoverImageUpload = async (file: File | null) => {
+    if (!file) return;
+
+    setLoading(true);
+
+    try {
+      const uploadedCoverImage = await uploadImage(file);
+      console.log("Uploaded Cover Image URL:", uploadedCoverImage);
+      setCoverImageUrl(uploadedCoverImage);
+    } catch (error) {
+      console.error("Error uploading cover image:", error);
+      alert("Error uploading cover image:");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddProduct = async () => {
+    if (!productName || !price || imageUrls.length === 0 || !coverImageUrl) {
+      alert("Please fill all fields and upload images!");
+      return;
+    }
+
+    setLoading(true);
     try {
       if (
         newCategory &&
         !categories.some((cat) => cat.categoryName === newCategory)
       ) {
-        // If the new category doesn't exist, add it to the categories
         await fetch("/api/categories", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -68,8 +94,6 @@ const AddProduct = () => {
 
       const categoryToUse = newCategory || category;
 
-      console.log("Images:", imageUrls);
-
       const response = await fetch("/api/products", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -77,19 +101,17 @@ const AddProduct = () => {
           productName,
           price,
           imageUrls,
-          category: categoryToUse,
+          coverImageUrl,
+          categoryName: categoryToUse,
           shortDescription,
           description,
           isActive,
         }),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to add product");
-      }
+      if (!response.ok) throw new Error("Failed to add product");
 
       alert("Product added successfully!");
-
       setProductName("");
       setPrice("");
       setShortDescription("");
@@ -98,6 +120,8 @@ const AddProduct = () => {
       setNewCategory("");
       setIsActive(true);
       setImageUrls([]);
+      setCoverImageUrl("");
+      fetchProducts();
     } catch (error) {
       console.error("Error:", error);
     } finally {
@@ -126,9 +150,6 @@ const AddProduct = () => {
           value={category}
           onChange={(e) => {
             setCategory(e.target.value);
-            if (e.target.value !== "add-new") {
-              setNewCategory(""); // Reset newCategory if an existing category is selected
-            }
           }}
           className="block border p-2 w-full"
         >
@@ -147,7 +168,10 @@ const AddProduct = () => {
           type="text"
           placeholder="Or add new category"
           value={newCategory}
-          onChange={(e) => setNewCategory(e.target.value)}
+          onChange={(e) => {
+            setNewCategory(e.target.value);
+            setCategory("add-new");
+          }}
           className="block border p-2 mt-2 w-full"
         />
       )}
@@ -166,13 +190,42 @@ const AddProduct = () => {
         onChange={(e) => setDescription(e.target.value)}
         className="block border p-2 mb-2 w-full"
       />
+      {/* Upload Cover Image */}
+      <div className="flex flex-col mb-4">
+        <label className="mb-2 text-gray-700 font-semibold">
+          Upload Cover Image:
+        </label>
+        <input
+          type="file"
+          onChange={(e) => {
+            if (e.target.files && e.target.files[0]) {
+              handleCoverImageUpload(e.target.files[0]);
+            }
+          }}
+          className="block border border-gray-300 rounded-lg p-2 w-full"
+        />
+        {coverImageUrl && (
+          <img
+            src={coverImageUrl}
+            alt="Cover"
+            className="mt-2 w-32 h-32 object-cover border"
+          />
+        )}
+      </div>
+
+      {/* แสดงภาพทั้งหมด และเลือก Cover Image */}
       <div className="flex flex-wrap">
         {imageUrls.map((img, index) => (
           <div key={index} className="relative">
             <img
               src={typeof img === "string" ? img : URL.createObjectURL(img)}
               alt={`Uploaded Image ${index + 1}`}
-              className="w-24 h-24 object-cover m-2"
+              className={`w-24 h-24 object-cover m-2 border-2 ${
+                coverImageIndex === index
+                  ? "border-blue-500"
+                  : "border-gray-300"
+              }`}
+              onClick={() => setCoverImageIndex(index)}
             />
             <button
               onClick={() => {
@@ -187,32 +240,27 @@ const AddProduct = () => {
         ))}
       </div>
 
+      {/* Upload multiple images */}
       <div className="flex flex-col mb-4">
         <label
           className="mb-2 text-gray-700 font-semibold"
           htmlFor="file-upload"
         >
-          Upload Image (can upload multiple)
+          Upload Images (Multiple) :
         </label>
         <input
           id="file-upload"
           type="file"
-          onChange={(e) => setImage(e.target.files ? e.target.files[0] : null)}
-          className="block border border-gray-300 rounded-lg p-2 mb-2 w-full transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          multiple
+          onChange={(e) => handleAddImageUrl(e.target.files)}
+          className="block border border-gray-300 rounded-lg p-2 mb-2 w-full"
         />
-        <button
-          onClick={handleAddImageUrl}
-          disabled={loading}
-          className={`bg-blue-500 text-white px-4 py-2 rounded-lg transition duration-200 ease-in-out 
-      ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-600"}`}
-        >
-          {loading ? "Adding..." : "Add Image"}
-        </button>
       </div>
+
       <button
         onClick={handleAddProduct}
         disabled={loading}
-        className="bg-blue-500 text-white px-4 py-2 rounded"
+        className="bg-[#D99F2B] text-white px-4 py-2 rounded"
       >
         {loading ? "Uploading..." : "Add Product"}
       </button>
@@ -221,13 +269,3 @@ const AddProduct = () => {
 };
 
 export default AddProduct;
-
-
-
-
-
-
-
-
-
-

@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import useUserId from "@/hooks/useUserId";
 import { useNotification } from "@/components/NotificationContext";
-
+import { Product } from "@/models/Product";
 export default function CheckoutPage() {
   const router = useRouter();
   const { addNotification } = useNotification();

@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 import { Product } from "@/models/Product";
 import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -15,6 +21,7 @@ interface CartContextType {
   cart: CartItem[];
   addToCart: (product: Product) => void;
   removeFromCart: (id: string) => void;
+  clearCart: () => void;
 }
 
 // สร้าง Context
@@ -23,6 +30,19 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 // Provider สำหรับใช้ในแอป
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
+
+  // โหลดข้อมูลตะกร้าจาก localStorage เมื่อ Component เริ่มทำงาน
+  useEffect(() => {
+    const storedCart = localStorage.getItem("cart");
+    if (storedCart) {
+      setCart(JSON.parse(storedCart));
+    }
+  }, []);
+
+  // บันทึกข้อมูลตะกร้าลง localStorage ทุกครั้งที่ตะกร้าเปลี่ยน
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
 
   // ฟังก์ชันเพิ่มสินค้า
   const addToCart = (product: Product) => {
@@ -39,13 +59,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  // ฟังก์ชันลบสินค้า
+  // ฟังก์ชันลบสินค้าออกจากตะกร้า
   const removeFromCart = (id: string) => {
     setCart((prevCart) => prevCart.filter((item) => item.id !== id));
   };
 
+  // ฟังก์ชันล้างตะกร้าสินค้า
+  const clearCart = () => {
+    setCart([]);
+  };
+
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart }}>
+    <CartContext.Provider
+      value={{ cart, addToCart, removeFromCart, clearCart }}
+    >
       {children}
     </CartContext.Provider>
   );

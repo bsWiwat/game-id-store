@@ -50,34 +50,42 @@ const CartModal = ({ userId }: { userId: string }) => {
       <h2 className="text-lg font-semibold">Shopping Cart</h2>
 
       {loading ? (
-        <div className="text-center text-gray-500">Loading...</div>
+        <p className="text-center text-gray-500">Loading...</p>
+      ) : error ? (
+        <p className="text-red-500 text-center">Error: {error}</p>
       ) : cart.length === 0 ? (
         <div className="text-center text-gray-500">Your cart is empty</div>
       ) : (
         <div className="flex flex-col gap-4">
-          {cart.map((item) => (
-            <div key={item.id} className="flex gap-4">
-              <Image
-                src={item.imageUrls?.[0] || "/logo.png"}
-                alt={item.productName}
-                width={64}
-                height={80}
-                className="object-cover rounded-md"
-              />
-              <div className="flex flex-col justify-between w-full">
-                <div>
-                  <h3 className="font-semibold">{item.productName}</h3>
-                  <p className="text-sm text-[#D99F2B]">฿ {item.price}</p>
+          {cart.map((item) => {
+            const product = getProductDetails(item.id);
+            return product ? (
+              <div key={item.id} className="flex gap-4">
+                <Image
+                  src={product.coverImageUrl}
+                  alt={product.id}
+                  width={64}
+                  height={80}
+                  className="object-cover rounded-md"
+                />
+                <div className="flex flex-col justify-between w-full">
+                  <div>
+                    <h3 className="font-semibold">{product.productName}</h3>
+                    <p className="text-sm text-[#D99F2B]">฿ {product.price}</p>
+                    <p className="text-xs text-gray-500">
+                      Qty: {item.quantity}
+                    </p>
+                  </div>
+                  <button
+                    className="text-red-500 text-sm"
+                    onClick={() => removeFromCart(item.id)}
+                  >
+                    Remove
+                  </button>
                 </div>
-                <button
-                  className="text-red-500 text-sm"
-                  onClick={() => removeFromCart(item.id)}
-                >
-                  Remove
-                </button>
               </div>
-            </div>
-          ))}
+            ) : null;
+          })}
           <div className="flex justify-between font-semibold">
             <span>Subtotal</span>
             <span>{cart.reduce((total, item) => total + item.price, 0)} ฿</span>

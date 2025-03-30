@@ -79,7 +79,11 @@ export default function ProductDetail() {
         {/* Product Details */}
         <div className="w-full lg:w-1/2 flex flex-col justify-between">
           <div className="flex flex-col gap-8">
-            <h1 className="text-2xl font-bold">GAME-{product.id}</h1>
+            {/* Show Relative path*/}
+            <p className="text-sm text-gray-500">
+              / {product.categoryName} / {product.productName}
+            </p>
+            <h2 className="text-3xl font-bold">GAME-{product.productName}</h2>
             <p className="text-lg text-[#D99F2B]">Price: ฿ {product.price}</p>
             <div className="h-[2px] bg-gray-200" />
             <p className="text-sm">{product.shortDescription}</p>
@@ -107,9 +111,13 @@ export default function ProductDetail() {
 
       <div className="mt-24 px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-32">
         <h1 className="text-2xl font-bold mb-6">Similar Products</h1>
-        <div className="flex flex-wrap gap-10 justify-center mx-5">
+        <div className="flex flex-wrap gap-10 justify-start mx-5">
           {productCategory
-            .filter((item) => item.id !== product.id)
+            .filter(
+              (item) =>
+                item.id !== product.id &&
+                item.categoryName === product.categoryName
+            )
             .slice(0, 4)
             .map((product) => (
               <ProductList key={product.id} product={product} />
