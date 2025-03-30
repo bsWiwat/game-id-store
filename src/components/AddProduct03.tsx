@@ -15,7 +15,7 @@ const AddProduct = () => {
   const [isActive, setIsActive] = useState(true);
   const [categories, setCategories] = useState<
     { id: string; categoryName: string }[]
-  >([]); // Default to empty array
+  >([]);
 
   // Fetch categories on component mount
   useEffect(() => {

@@ -5,8 +5,6 @@ import ProductList from "@/components/ProductList";
 import Slider from "@/components/Slider";
 import { Product } from "@/models/Product";
 import Link from "next/link";
-import AddProduct03 from "@/components/AddProduct03";
-import Logout from "@/components/Logout";
 
 const HomePage = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -55,7 +53,6 @@ const HomePage = () => {
             ))}
           </div>
         </div>
-        <Logout />
       </div>
     </>
   );
