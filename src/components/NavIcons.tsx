@@ -1,10 +1,11 @@
 "use client";
 import Image from "next/image";
-import { useState, useEffect, useRef, use } from "react";
+import { useState, useEffect, useRef } from "react";
 import CartModal from "./CartModal";
 import { useCart } from "@/components/CartContext";
 import { useNotification } from "@/components/NotificationContext";
 import LoginPopup from "./LoginPopup";
+import useUserId from "@/hooks/useUserId";
 
 const NavIcons = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -13,6 +14,7 @@ const NavIcons = () => {
   const { cart } = useCart();
   const { notifications, markAsRead } = useNotification(); // ดึง markAsRead จาก useNotification
   const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const userId = useUserId();
 
   // ใช้ useRef เพื่อตรวจจับการคลิกนอก Notification
   const notiRef = useRef<HTMLDivElement>(null);
@@ -123,9 +125,10 @@ const NavIcons = () => {
       </div>
 
       {/* Cart Modal */}
-      {isCartOpen && <CartModal />}
+      {isCartOpen && <CartModal userId={userId || ""} />}
     </div>
   );
 };
 
 export default NavIcons;
+
