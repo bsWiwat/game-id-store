@@ -91,7 +91,7 @@ export default function CheckoutPage() {
             <thead>
               <tr className="bg-gray-100">
                 <th className="border p-4 text-left">Product</th>
-                <th className="border p-4 text-left">Quantity</th>
+                <th className="border p-4 text-left">Category</th>
                 <th className="border p-4 text-left">Subtotal</th>
               </tr>
             </thead>
@@ -112,10 +112,8 @@ export default function CheckoutPage() {
                     </div>
                     <span>{item.productName}</span>
                   </td>
-                  <td className="border p-4">{item.quantity}</td>
-                  <td className="border p-4">
-                    ฿{(item.price * item.quantity).toFixed(2)}
-                  </td>
+                  <td className="border p-4">{item.categoryName}</td>
+                  <td className="border p-4">฿{item.price.toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>

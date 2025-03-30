@@ -53,9 +53,8 @@ export default function CartPage() {
               <thead>
                 <tr className="bg-gray-100">
                   <th className="border p-4 text-left">Product</th>
+                  <th className="border p-4 text-left">Category</th>
                   <th className="border p-4 text-left">Price</th>
-                  <th className="border p-4 text-left">Quantity</th>
-                  <th className="border p-4 text-left">Subtotal</th>
                   <th className="border p-4 text-left"></th>
                 </tr>
               </thead>
@@ -76,11 +75,8 @@ export default function CartPage() {
                       </div>
                       <span>{item.productName}</span>
                     </td>
+                    <td className="border p-4">{item.categoryName}</td>
                     <td className="border p-4">฿{item.price.toFixed(2)}</td>
-                    <td className="border p-4">{item.quantity}</td>
-                    <td className="border p-4">
-                      ฿{(item.price * item.quantity).toFixed(2)}
-                    </td>
                     <td className="border p-4 text-center">
                       <button
                         className="bg-red-500 text-white px-3 py-1 rounded-full"
