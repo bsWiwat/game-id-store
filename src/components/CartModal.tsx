@@ -1,36 +1,73 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCart } from "@/components/CartContext";
+import { fetchCart } from "@/utils/fetchCart";
 
-const CartModal = () => {
-  const { cart, removeFromCart } = useCart(); // ดึงข้อมูลตะกร้าจาก context
+const CartModal = ({ userId }: { userId: string }) => {
+  const [cart, setCart] = useState<
+    {
+      id: string;
+      categoryName: string;
+      shortDescription: string;
+      description: string;
+      productName: string;
+      price: number;
+      imageUrls: string[];
+      createdAt: Date;
+      isActive: boolean;
+    }[]
+  >([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (userId) {
+      fetchCart(userId)
+        .then(setCart)
+        .finally(() => setLoading(false));
+    }
+  }, [userId]);
+
+  const removeFromCart = async (productId: string) => {
+    try {
+      const response = await fetch(`/api/cart/${userId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId }),
+      });
+
+      if (response.ok) {
+        setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
+      }
+    } catch (error) {
+      console.error("Error removing item:", error);
+    }
+  };
 
   return (
     <div className="w-80 absolute p-4 rounded-md shadow-lg bg-white top-12 right-0 flex flex-col gap-4 z-20">
       <h2 className="text-lg font-semibold">Shopping Cart</h2>
 
-      {cart.length === 0 ? (
+      {loading ? (
+        <div className="text-center text-gray-500">Loading...</div>
+      ) : cart.length === 0 ? (
         <div className="text-center text-gray-500">Your cart is empty</div>
       ) : (
         <div className="flex flex-col gap-4">
           {cart.map((item) => (
             <div key={item.id} className="flex gap-4">
               <Image
-                src={item.image}
-                alt={item.name}
+                src={item.imageUrls?.[0] || "/logo.png"}
+                alt={item.productName}
                 width={64}
                 height={80}
                 className="object-cover rounded-md"
               />
               <div className="flex flex-col justify-between w-full">
                 <div>
-                  <h3 className="font-semibold">{item.name}</h3>
-                  <p className="text-sm text-[#D99F2B]">
-                    {item.currency} {item.price}
-                  </p>
-                  <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
+                  <h3 className="font-semibold">{item.productName}</h3>
+                  <p className="text-sm text-[#D99F2B]">฿ {item.price}</p>
                 </div>
                 <button
                   className="text-red-500 text-sm"
@@ -43,13 +80,7 @@ const CartModal = () => {
           ))}
           <div className="flex justify-between font-semibold">
             <span>Subtotal</span>
-            <span>
-              {cart.reduce(
-                (total, item) => total + item.price * item.quantity,
-                0
-              )}{" "}
-              ฿
-            </span>
+            <span>{cart.reduce((total, item) => total + item.price, 0)} ฿</span>
           </div>
           <div className="flex justify-between">
             <Link href="/cart">
@@ -70,3 +101,5 @@ const CartModal = () => {
 };
 
 export default CartModal;
+
+
