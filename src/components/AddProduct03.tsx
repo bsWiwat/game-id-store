@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 const AddProduct = () => {
   const [loading, setLoading] = useState(false);
   const [imageUrls, setImageUrls] = useState<(File | string)[]>([]);
+  const [coverImageUrl, setCoverImageUrl] = useState("");
   const [coverImageIndex, setCoverImageIndex] = useState<number | null>(null);
   const [productName, setProductName] = useState("");
   const [price, setPrice] = useState("");
@@ -45,7 +46,7 @@ const AddProduct = () => {
       );
 
       setImageUrls((prev) => [...prev, ...uploadedImages]);
-      if (coverImageIndex === null) setCoverImageIndex(0); // ตั้งค่า Cover อัตโนมัติรูปแรก
+      if (coverImageIndex === null) setCoverImageIndex(0);
     } catch (error) {
       console.error("Error uploading images:", error);
     } finally {
@@ -53,14 +54,30 @@ const AddProduct = () => {
     }
   };
 
+  const handleCoverImageUpload = async (file: File | null) => {
+    if (!file) return;
+
+    setLoading(true);
+
+    try {
+      const uploadedCoverImage = await uploadImage(file);
+      console.log("Uploaded Cover Image URL:", uploadedCoverImage);
+      setCoverImageUrl(uploadedCoverImage);
+    } catch (error) {
+      console.error("Error uploading cover image:", error);
+      alert("Error uploading cover image:");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleAddProduct = async () => {
-    if (!productName || !price || imageUrls.length === 0) {
-      alert("Please fill all fields and upload at least one image!");
+    if (!productName || !price || imageUrls.length === 0 || !coverImageUrl) {
+      alert("Please fill all fields and upload images!");
       return;
     }
 
     setLoading(true);
-
     try {
       if (
         newCategory &&
@@ -82,7 +99,7 @@ const AddProduct = () => {
           productName,
           price,
           imageUrls,
-          coverImage: imageUrls[coverImageIndex || 0], // ใช้ภาพที่เลือกเป็น Cover
+          coverImageUrl,
           category: categoryToUse,
           shortDescription,
           description,
@@ -101,7 +118,7 @@ const AddProduct = () => {
       setNewCategory("");
       setIsActive(true);
       setImageUrls([]);
-      setCoverImageIndex(null);
+      setCoverImageUrl("");
     } catch (error) {
       console.error("Error:", error);
     } finally {
@@ -170,6 +187,28 @@ const AddProduct = () => {
         onChange={(e) => setDescription(e.target.value)}
         className="block border p-2 mb-2 w-full"
       />
+      {/* Upload Cover Image */}
+      <div className="flex flex-col mb-4">
+        <label className="mb-2 text-gray-700 font-semibold">
+          Upload Cover Image:
+        </label>
+        <input
+          type="file"
+          onChange={(e) => {
+            if (e.target.files && e.target.files[0]) {
+              handleCoverImageUpload(e.target.files[0]);
+            }
+          }}
+          className="block border border-gray-300 rounded-lg p-2 w-full"
+        />
+        {coverImageUrl && (
+          <img
+            src={coverImageUrl}
+            alt="Cover"
+            className="mt-2 w-32 h-32 object-cover border"
+          />
+        )}
+      </div>
 
       {/* แสดงภาพทั้งหมด และเลือก Cover Image */}
       <div className="flex flex-wrap">
@@ -189,7 +228,6 @@ const AddProduct = () => {
               onClick={() => {
                 const updatedImages = imageUrls.filter((_, i) => i !== index);
                 setImageUrls(updatedImages);
-                if (coverImageIndex === index) setCoverImageIndex(null);
               }}
               className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex justify-center items-center"
             >
@@ -205,7 +243,7 @@ const AddProduct = () => {
           className="mb-2 text-gray-700 font-semibold"
           htmlFor="file-upload"
         >
-          Upload Images (Multiple) Click One Image to Set as Cover:
+          Upload Images (Multiple) :
         </label>
         <input
           id="file-upload"

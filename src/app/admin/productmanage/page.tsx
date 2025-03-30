@@ -60,7 +60,7 @@ const ProductManage = () => {
               <tr key={product.id} className="border">
                 <td className="border p-2">
                   <Image
-                    src={product.imageUrls?.[0] || "/logo.png"}
+                    src={product.coverImageUrl || "/logo.png"}
                     width={50}
                     height={50}
                     alt={product.productName}

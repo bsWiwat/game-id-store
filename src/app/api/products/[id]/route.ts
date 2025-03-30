@@ -40,6 +40,7 @@ export async function PATCH(
       productName,
       price,
       imageUrls,
+      coverImageUrl,
       categoryName,
       shortDescription,
       description,
@@ -51,6 +52,7 @@ export async function PATCH(
       productName,
       price,
       imageUrls,
+      coverImageUrl,
       categoryName,
       shortDescription,
       description,
@@ -92,16 +94,3 @@ export async function DELETE(
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

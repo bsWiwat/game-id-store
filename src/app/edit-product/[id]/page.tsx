@@ -47,6 +47,7 @@ const EditProduct = () => {
         description: product.description,
         shortDescription: product.shortDescription,
         imageUrls: product.imageUrls,
+        coverImageUrl: product.coverImageUrl,
       });
       alert("Product updated successfully!");
       router.push("/admin/productmanage");
@@ -71,6 +72,23 @@ const EditProduct = () => {
         <div className="w-full lg:w-1/2 lg:sticky top-20 h-max ">
           <h2 className="text-xl font-bold mb-4">Product Images</h2>
           <div className="flex gap-4 flex-wrap">
+            {product.coverImageUrl && (
+              <div className="relative w-32 h-32">
+                <Image
+                  src={product.coverImageUrl}
+                  width={128}
+                  height={128}
+                  alt="Cover Image"
+                  className="rounded border"
+                />
+                <button
+                  className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full text-xs"
+                  onClick={() => handleRemoveImage(-1)}
+                >
+                  ✕
+                </button>
+              </div>
+            )}
             {product.imageUrls.map((img, index) => (
               <div key={index} className="relative w-32 h-32">
                 <Image
