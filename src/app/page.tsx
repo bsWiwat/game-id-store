@@ -49,7 +49,7 @@ const HomePage = () => {
           <h1 className="text-2xl font-bold mb-6">New Products</h1>
           <div className="flex flex-wrap gap-10 justify-center mx-5">
             {/* map ข้อมูลแต่ละ product และส่งไปยัง Card component */}
-            {products.slice(0, 9).map((product) => (
+            {products.slice(0, 10).map((product) => (
               <ProductList key={product.id} product={product} />
             ))}
           </div>

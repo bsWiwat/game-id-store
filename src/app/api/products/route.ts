@@ -1,15 +1,17 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/firebase";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
 
 // GET: Retrieve all products
 export async function GET() {
   try {
-    const querySnapshot = await getDocs(collection(db, "products"));
-    const products = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+     const q = query(collection(db, "products"), where("isActive", "==", true));
+     const querySnapshot = await getDocs(q);
+
+     const products = querySnapshot.docs.map((doc) => ({
+       id: doc.id,
+       ...doc.data(),
+     }));
 
     return NextResponse.json(products, { status: 200 });
   } catch (error) {
@@ -65,3 +67,5 @@ export async function POST(req: Request) {
     );
   }
 }
+
+
