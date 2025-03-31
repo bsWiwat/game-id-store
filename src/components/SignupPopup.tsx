@@ -12,6 +12,9 @@ const SignupPopup = ({
   onClose: () => void;
   onSwitchToSignin: () => void;
 }) => {
+  const [name, setName] = useState("");
+  const [surname, setSurname] = useState("");
+  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -37,6 +40,9 @@ const SignupPopup = ({
 
       // Store user data in Firestore
       await setDoc(doc(db, "users", userId), {
+        name,
+        surname,
+        phone,
         email,
         role: "user",
         createdAt: new Date(),
@@ -65,6 +71,36 @@ const SignupPopup = ({
         <div className="w-1/2 p-6">
           <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
           <form onSubmit={handleSignUp}>
+            <label className="block mb-2">Name</label>
+            <input
+              type="name"
+              placeholder="Enter your name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full p-2 border rounded mb-4"
+              required
+            />
+
+            <label className="block mb-2">Surname</label>
+            <input
+              type="surname"
+              placeholder="Enter your surname"
+              value={surname}
+              onChange={(e) => setSurname(e.target.value)}
+              className="w-full p-2 border rounded mb-4"
+              required
+            />
+
+            <label className="block mb-2">Phone</label>
+            <input
+              type="phone"
+              placeholder="Enter your phone"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="w-full p-2 border rounded mb-4"
+              required
+            />
+
             <label className="block mb-2">Email</label>
             <input
               type="email"
@@ -164,6 +200,23 @@ const SignupPopup = ({
 };
 
 export default SignupPopup;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
