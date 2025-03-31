@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
+import { useUser } from "@/context/UserContext";
 
 const SignupPopup = ({
   onClose,
@@ -12,6 +13,7 @@ const SignupPopup = ({
   onClose: () => void;
   onSwitchToSignin: () => void;
 }) => {
+  const { setUser } = useUser();
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [phone, setPhone] = useState("");
@@ -38,15 +40,11 @@ const SignupPopup = ({
       );
       const userId = userCredential.user.uid;
 
+      const userData = { name, surname, phone, email, role: "user", createdAt: new Date() };
+
       // Store user data in Firestore
-      await setDoc(doc(db, "users", userId), {
-        name,
-        surname,
-        phone,
-        email,
-        role: "user",
-        createdAt: new Date(),
-      });
+      await setDoc(doc(db, "users", userId), userData);
+      setUser({ uid: userId, ...userData });
 
       // Store userId in cookies
       document.cookie = `userId=${userId}; path=/`;
@@ -200,6 +198,9 @@ const SignupPopup = ({
 };
 
 export default SignupPopup;
+
+
+
 
 
 

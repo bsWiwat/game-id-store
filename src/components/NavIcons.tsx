@@ -7,8 +7,11 @@ import { useNotification } from "@/components/NotificationContext";
 import LoginPopup from "./LoginPopup";
 import useUserId from "@/hooks/useUserId";
 import SignupPopup from "./SignupPopup";
+import UserProfile from "@/components/UserProfile";
+import { useUser } from "@/context/UserContext";
 
 const NavIcons = () => {
+  const { user } = useUser();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -49,14 +52,18 @@ const NavIcons = () => {
   return (
     <div className="flex items-center gap-4 xl:gap-6 relative">
       {/* Profile Icon */}
-      <Image
-        src="/profile.png"
-        alt="Profile"
-        width={22}
-        height={22}
-        className="cursor-pointer"
-        onClick={() => setIsLoginOpen(true)}
-      />
+      {user ? (
+        <UserProfile />
+      ) : (
+        <Image
+          src="/profile.png"
+          alt="Profile"
+          width={22}
+          height={22}
+          className="cursor-pointer"
+          onClick={() => setIsLoginOpen(true)}
+        />
+      )}
 
       {/* Login Popup */}
       {isLoginOpen && (
@@ -154,6 +161,10 @@ const NavIcons = () => {
 };
 
 export default NavIcons;
+
+
+
+
 
 
 

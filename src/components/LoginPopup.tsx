@@ -2,7 +2,9 @@ import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { useUser } from "@/context/UserContext";
 
 const LoginPopup = ({
   onClose,
@@ -11,6 +13,7 @@ const LoginPopup = ({
   onClose: () => void;
   onSwitchToSignup: () => void;
 }) => {
+  const { setUser } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -30,6 +33,19 @@ const LoginPopup = ({
 
       // Store userId in local storage or cookies
       document.cookie = `userId=${userId}; path=/`;
+
+      // Fetch user data from Firestore
+      const userDoc = await getDoc(doc(db, "users", userId));
+      if (userDoc.exists()) {
+        setUser({
+          uid: userId,
+          name: userDoc.data()?.name || "",
+          surname: userDoc.data()?.surname,
+          email: userDoc.data()?.email || "",
+          phone: userDoc.data()?.phone,
+          role: userDoc.data()?.role,
+        });
+      }
 
       onClose();
       router.push("/"); // Redirect after login
