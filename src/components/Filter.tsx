@@ -1,18 +1,30 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation"; // เพิ่มตัวนี้
 import { Product } from "@/models/Product";
 import { FilterProps } from "@/models/Product";
 
 const Filter = ({ products, setFilteredProducts }: FilterProps) => {
+  const searchParams = useSearchParams(); // อ่านค่า URL เช่น ?category=genshin
+  const categoryFromURL = searchParams.get("category") || "";
+
   const [filters, setFilters] = useState({
     minPrice: "",
     maxPrice: "",
-    categoryName: "",
+    categoryName: categoryFromURL, // ใช้ค่าหมวดหมู่จาก URL ตอนโหลด
     sort: "",
   });
 
   const [categories, setCategories] = useState<
     { id: string; categoryName: string }[]
   >([]);
+
+  // อัปเดตค่า categoryName ใน filter ถ้า URL เปลี่ยน
+  useEffect(() => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      categoryName: categoryFromURL,
+    }));
+  }, [categoryFromURL]);
 
   // ดึงหมวดหมู่จาก API
   useEffect(() => {
@@ -28,15 +40,16 @@ const Filter = ({ products, setFilteredProducts }: FilterProps) => {
     fetchCategories();
   }, []);
 
+  // อัปเดตสินค้าเมื่อ filters เปลี่ยน
+  useEffect(() => {
+    filterProducts();
+  }, [filters, products]);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
   ) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
   };
-
-  useEffect(() => {
-    filterProducts();
-  }, [filters, products]);
 
   const filterProducts = () => {
     let filtered = [...products];
@@ -89,10 +102,11 @@ const Filter = ({ products, setFilteredProducts }: FilterProps) => {
         />
         <select
           name="categoryName"
+          value={filters.categoryName} // ใช้ค่า category จาก state
           onChange={handleChange}
           className="py-2 px-4 rounded-2xl text-xs font-medium bg-gray-100"
         >
-          <option value="">Category</option>
+          <option value="">All Categories</option>
           {categories.length > 0 ? (
             categories.map((cat) => (
               <option key={cat.id} value={cat.categoryName}>
@@ -113,8 +127,6 @@ const Filter = ({ products, setFilteredProducts }: FilterProps) => {
           <option value="">Sort By</option>
           <option value="asc price">Price (low to high)</option>
           <option value="desc price">Price (high to low)</option>
-          <option value="asc lastUpdated">Newest</option>
-          <option value="desc lastUpdated">Oldest</option>
         </select>
         <button
           onClick={filterProducts}

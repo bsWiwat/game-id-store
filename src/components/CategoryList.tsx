@@ -1,41 +1,125 @@
+"use client";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation"; // ใช้สำหรับเปลี่ยนหน้า
+import { useEffect, useRef, useState } from "react";
 
 const logos = [
-  { src: "/Logo_Genshin.png", alt: "Logo Genshin", link: "/list?cat=genshin" },
-  { src: "/Logo_Cookie.png", alt: "Logo Cookie", link: "/list?cat=cookie" },
-  { src: "/Logo_Rov.png", alt: "Logo ROv", link: "/list?cat=rov" },
-  { src: "/Logo_LOL.png", alt: "Logo LOL", link: "/list?cat=lol" },
   {
-    src: "/Logo_HonkaiSR.png",
-    alt: "Logo HonkaiSR",
-    link: "/list?cat=honkaiSR",
+    src: "/LogoGame/Logo_Genshin.png",
+    alt: "Logo Genshin",
+    category: "Genshin Impact",
+    link: "/list?category=Genshin Impact",
   },
-  { src: "/Logo_Pokemon.png", alt: "Logo Pokemon", link: "/list?cat=pokemon" },
+  {
+    src: "/LogoGame/Logo_Cookie.png",
+    alt: "Logo Cookie",
+    category: "Cookie Run Kingdoms",
+    link: "/list?category=Cookie Run Kingdoms",
+  },
+  {
+    src: "/LogoGame/Logo_Rov.png",
+    alt: "Logo ROv",
+    category: "Arena of Valor",
+    link: "/list?category=Arena of Valor",
+  },
+  {
+    src: "/LogoGame/Logo_LOL.png",
+    alt: "Logo LOL",
+    category: "League of Legend",
+    link: "/list?category=League of Legend",
+  },
+  {
+    src: "/LogoGame/Logo_HonkaiSR.png",
+    alt: "Logo HonkaiSR",
+    category: "Hokai Star Rail",
+    link: "/list?category=Hokai Star Rail",
+  },
+  {
+    src: "/LogoGame/Logo_Pokemon.png",
+    alt: "Logo Pokemon",
+    category: "Pokemon TCG",
+    link: "/list?category=Pokemon TCG",
+  },
+  {
+    src: "/LogoGame/Logo_Marvel.png",
+    alt: "Logo Marvel",
+    category: "Marvel Rivals",
+    link: "/list?category=Marvel Rivals",
+  },
 ];
 
+const infiniteLogos = [...logos, ...logos, ...logos]; // Duplicate list
+
 const CategoryList = () => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  useEffect(() => {
+    const scrollContainer = scrollRef.current;
+    if (!scrollContainer) return;
+
+    let animationFrame: number;
+    const speed = 1; // ความเร็วเลื่อน
+
+    const scrollLoop = () => {
+      if (!isDragging) {
+        scrollContainer.scrollLeft += speed;
+        if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth / 3) {
+          scrollContainer.scrollLeft = 0;
+        }
+      }
+      animationFrame = requestAnimationFrame(scrollLoop);
+    };
+
+    scrollLoop();
+
+    return () => cancelAnimationFrame(animationFrame);
+  }, [isDragging]);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setStartX(e.pageX - (scrollRef.current?.offsetLeft || 0));
+    setScrollLeft(scrollRef.current?.scrollLeft || 0);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - (scrollRef.current?.offsetLeft || 0);
+    const walk = (x - startX) * 2;
+    if (scrollRef.current) scrollRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
   return (
-    <div className="px-4 overflow-x-scroll scrollbar-hide py-2">
-      <div className="flex gap-4 md:gap-8">
-        {logos.map((logo, index) => (
-          <Link
-            key={index}
-            href={logo.link}
-            className="flex-shrink-0 sm:w-1/2 lg:w-1/4 xl:w-1/6"
-          >
-            <div className="relative bg-white min-w-[263px] min-h-[148px] outline outline-[#D99F2b] flex items-center justify-center">
-              <Image
-                src={logo.src}
-                alt={logo.alt}
-                width={263}
-                height={148}
-                className="-w-full h-auto max-w-[263px] max-h-[148px] object-cover"
-              />
-            </div>
-          </Link>
-        ))}
-      </div>
+    <div
+      ref={scrollRef}
+      className="px-4 overflow-x-auto whitespace-nowrap scrollbar-hide py-2 flex gap-4"
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+    >
+      {infiniteLogos.map((logo, index) => (
+        <Link key={index} href={logo.link} className="flex-shrink-0">
+          <div className="relative bg-white min-w-[263px] min-h-[148px] outline outline-[#D99F2b] flex items-center justify-center">
+            <Image
+              src={logo.src}
+              alt={logo.alt}
+              width={263}
+              height={148}
+              className="w-full h-auto max-w-[263px] max-h-[148px] object-cover"
+              draggable="false"
+            />
+          </div>
+        </Link>
+      ))}
     </div>
   );
 };

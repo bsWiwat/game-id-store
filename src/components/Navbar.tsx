@@ -36,12 +36,11 @@ const Navbar = () => {
             </Link>
             <div className="hidden xl:flex gap-4">
               <Link href="/" className=" hover:-[#d99f2b]">
-                Homepage
+                Home page
               </Link>
               <Link href="/list">Shop</Link>
-              <Link href="/">Deals</Link>
               <Link href="/">About</Link>
-              <Link href="/">Contract</Link>
+              <Link href="/">Contact</Link>
             </div>
           </div>
           {/* Right */}
