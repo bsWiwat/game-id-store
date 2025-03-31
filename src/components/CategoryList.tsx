@@ -115,7 +115,7 @@ const CategoryList = () => {
               width={263}
               height={148}
               className="w-full h-auto max-w-[263px] max-h-[148px] object-cover"
-              draggable="false" // ป้องกันการลาก
+              draggable="false"
             />
           </div>
         </Link>

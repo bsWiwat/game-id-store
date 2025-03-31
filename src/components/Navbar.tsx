@@ -36,7 +36,7 @@ const Navbar = () => {
             </Link>
             <div className="hidden xl:flex gap-4">
               <Link href="/" className=" hover:-[#d99f2b]">
-                Homepage
+                Home page
               </Link>
               <Link href="/list">Shop</Link>
               <Link href="/">About</Link>
