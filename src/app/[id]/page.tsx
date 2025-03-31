@@ -8,12 +8,14 @@ import { Product } from "@/models/Product";
 import Link from "next/link";
 import LoginPopup from "@/components/LoginPopup";
 import useUserId from "@/hooks/useUserId";
+import SignupPopup from "@/components/SignupPopup";
 
 export default function ProductDetail() {
   const { id } = useParams();
   const [product, setProduct] = useState<Product | null>(null);
   const [productCategory, setProductCategory] = useState<Product[]>([]);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const userId: string | null = useUserId();
 
@@ -126,8 +128,31 @@ export default function ProductDetail() {
       </div>
 
       {/* Popup Login */}
-      {isLoginOpen && <LoginPopup onClose={() => setIsLoginOpen(false)} />}
+      {isLoginOpen && (
+        <LoginPopup
+          onClose={() => {
+            setIsLoginOpen(false);
+            setIsSignupOpen(false);
+          }}
+          onSwitchToSignup={() => {
+            setIsLoginOpen(false);
+            setIsSignupOpen(true);
+          }}
+        />
+      )}
+
+      {/* Signup Popup */}
+      {isSignupOpen && (
+        <SignupPopup
+          onClose={() => setIsLoginOpen(true)}
+          onSwitchToSignin={() => {
+            setIsLoginOpen(true);
+            setIsSignupOpen(false);
+          }}
+        />
+      )}
     </>
   );
-
 }
+
+

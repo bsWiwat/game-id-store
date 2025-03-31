@@ -61,7 +61,10 @@ const NavIcons = () => {
       {/* Login Popup */}
       {isLoginOpen && (
         <LoginPopup
-          onClose={() => setIsLoginOpen(false)}
+          onClose={() => {
+            setIsLoginOpen(false);
+            setIsSignupOpen(false);
+          }}
           onSwitchToSignup={() => {
             setIsLoginOpen(false);
             setIsSignupOpen(true);
@@ -70,7 +73,18 @@ const NavIcons = () => {
       )}
 
       {/* Signup Popup */}
-      {isSignupOpen && <SignupPopup onClose={() => setIsSignupOpen(false)} />}
+      {isSignupOpen && (
+        <SignupPopup
+          onClose={() => {
+            setIsLoginOpen(false);
+            setIsSignupOpen(false);
+          }}
+          onSwitchToSignin={() => {
+            setIsLoginOpen(true);
+            setIsSignupOpen(false);
+          }}
+        />
+      )}
 
       {/* Notifications */}
       <div
@@ -140,4 +154,6 @@ const NavIcons = () => {
 };
 
 export default NavIcons;
+
+
 

@@ -5,7 +5,13 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 
-const SignupPopup = ({ onClose }: { onClose: () => void }) => {
+const SignupPopup = ({
+  onClose,
+  onSwitchToSignin,
+}: {
+  onClose: () => void;
+  onSwitchToSignin: () => void;
+}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -96,6 +102,13 @@ const SignupPopup = ({ onClose }: { onClose: () => void }) => {
             </button>
           </form>
 
+          <div className="text-center mb-4">
+            Already have an account?{" "}
+            <button onClick={onSwitchToSignin} className="text-yellow-600">
+              Login
+            </button>
+          </div>
+
           <div className="text-center mb-4">or</div>
 
           <div className="flex justify-center gap-4 mb-4">
@@ -130,7 +143,7 @@ const SignupPopup = ({ onClose }: { onClose: () => void }) => {
         {/* Right Side - Banner */}
         <div className="w-1/2 relative">
           <Image
-            src="/loginbanner.jpg"
+            src="/Silde_Marvel.jpg"
             alt="Signup Banner"
             width={400}
             height={500}
@@ -140,7 +153,7 @@ const SignupPopup = ({ onClose }: { onClose: () => void }) => {
 
         {/* Close Button */}
         <button
-          className="absolute top-2 right-2 text-xl text-white"
+          className="absolute top-2 right-2 text-xl text-red"
           onClick={onClose}
         >
           ×
@@ -151,6 +164,11 @@ const SignupPopup = ({ onClose }: { onClose: () => void }) => {
 };
 
 export default SignupPopup;
+
+
+
+
+
 
 
 
