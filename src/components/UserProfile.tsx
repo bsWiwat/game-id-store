@@ -1,5 +1,5 @@
 import { useUser } from "@/context/UserContext";
-import LogoutButton from "./LogoutButton";
+import LogoutButton from "@/components/LogoutButton";
 
 const UserProfile = () => {
   const { user } = useUser();
@@ -24,5 +24,3 @@ const UserProfile = () => {
 };
 
 export default UserProfile;
-
-

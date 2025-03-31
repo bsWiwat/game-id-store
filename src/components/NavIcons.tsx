@@ -32,8 +32,8 @@ const NavIcons = () => {
       setIsProfileOpen(!isProfileOpen);
     } else {
       setIsLoginOpen(true);
-      }
-    };
+    }
+  };
 
   // ตรวจจับการคลิกนอก Notification แล้วปิดมัน
   useEffect(() => {
@@ -73,9 +73,7 @@ const NavIcons = () => {
       />
 
       {/* Profile Dropdown */}
-      {isProfileOpen && user && (
-        <UserProfile />
-      )}
+      {isProfileOpen && user && <UserProfile />}
 
       {/* Login Popup */}
       {isLoginOpen && !user && (
@@ -173,10 +171,3 @@ const NavIcons = () => {
 };
 
 export default NavIcons;
-
-
-
-
-
-
-
