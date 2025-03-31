@@ -5,8 +5,7 @@ import ProductList from "@/components/ProductList";
 import Slider from "@/components/Slider";
 import { Product } from "@/models/Product";
 import Link from "next/link";
-import LogoutButton from "@/components/LogoutButton";
-import Image from "next/image";
+
 const HomePage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   useEffect(() => {
@@ -62,8 +61,6 @@ const HomePage = () => {
             ))}
           </div>
         </div>
-        {/*Logout Button*/}
-        {/* <LogoutButton /> */}
       </div>
     </>
   );

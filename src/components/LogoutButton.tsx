@@ -11,10 +11,10 @@ const LogoutButton = () => {
     await signOut(auth);
     document.cookie = "userId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     logout();
-    router.push("/signin");
+    router.push("/");
   };
 
-  return <button onClick={handleLogout}>Logout</button>;
+  return <button className="" onClick={handleLogout}>Logout</button>;
 };
 
 export default LogoutButton;

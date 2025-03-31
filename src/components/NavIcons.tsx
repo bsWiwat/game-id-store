@@ -14,6 +14,7 @@ const NavIcons = () => {
   const { user } = useUser();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isSignupOpen, setIsSignupOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isNotiOpen, setIsNotiOpen] = useState(false);
   const { cart } = useCart();
@@ -23,6 +24,16 @@ const NavIcons = () => {
 
   // ใช้ useRef เพื่อตรวจจับการคลิกนอก Notification
   const notiRef = useRef<HTMLDivElement>(null);
+
+  const handleProfileClick = () => {
+    if (user) {
+      setIsLoginOpen(false);
+      setIsSignupOpen(false);
+      setIsProfileOpen(!isProfileOpen);
+    } else {
+      setIsLoginOpen(true);
+      }
+    };
 
   // ตรวจจับการคลิกนอก Notification แล้วปิดมัน
   useEffect(() => {
@@ -52,21 +63,22 @@ const NavIcons = () => {
   return (
     <div className="flex items-center gap-4 xl:gap-6 relative">
       {/* Profile Icon */}
-      {user ? (
+      <Image
+        src="/profile.png"
+        alt="Profile"
+        width={22}
+        height={22}
+        className="cursor-pointer"
+        onClick={() => handleProfileClick()}
+      />
+
+      {/* Profile Dropdown */}
+      {isProfileOpen && user && (
         <UserProfile />
-      ) : (
-        <Image
-          src="/profile.png"
-          alt="Profile"
-          width={22}
-          height={22}
-          className="cursor-pointer"
-          onClick={() => setIsLoginOpen(true)}
-        />
       )}
 
       {/* Login Popup */}
-      {isLoginOpen && (
+      {isLoginOpen && !user && (
         <LoginPopup
           onClose={() => {
             setIsLoginOpen(false);
@@ -80,7 +92,7 @@ const NavIcons = () => {
       )}
 
       {/* Signup Popup */}
-      {isSignupOpen && (
+      {isSignupOpen && !user && (
         <SignupPopup
           onClose={() => {
             setIsLoginOpen(false);

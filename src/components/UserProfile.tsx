@@ -7,7 +7,7 @@ const UserProfile = () => {
   if (!user) return null;
 
   return (
-    <div className="bg-white shadow-lg rounded-lg p-4 w-80">
+    <div className="w-80 absolute p-4 rounded-md shadow-lg bg-white top-12 right-0 flex flex-col gap-4 z-20">
       <h2 className="text-lg font-bold">Profile</h2>
       <p>
         <strong>Name:</strong> {user.name} {user.surname}
@@ -24,4 +24,5 @@ const UserProfile = () => {
 };
 
 export default UserProfile;
+
 
