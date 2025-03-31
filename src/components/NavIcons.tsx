@@ -6,9 +6,11 @@ import { useCart } from "@/components/CartContext";
 import { useNotification } from "@/components/NotificationContext";
 import LoginPopup from "./LoginPopup";
 import useUserId from "@/hooks/useUserId";
+import SignupPopup from "./SignupPopup";
 
 const NavIcons = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isNotiOpen, setIsNotiOpen] = useState(false);
   const { cart } = useCart();
@@ -18,10 +20,6 @@ const NavIcons = () => {
 
   // ใช้ useRef เพื่อตรวจจับการคลิกนอก Notification
   const notiRef = useRef<HTMLDivElement>(null);
-
-  const handleProfile = () => {
-    setIsLoginOpen(true);
-  };
 
   // ตรวจจับการคลิกนอก Notification แล้วปิดมัน
   useEffect(() => {
@@ -57,11 +55,22 @@ const NavIcons = () => {
         width={22}
         height={22}
         className="cursor-pointer"
-        onClick={handleProfile}
+        onClick={() => setIsLoginOpen(true)}
       />
 
       {/* Login Popup */}
-      {isLoginOpen && <LoginPopup onClose={() => setIsLoginOpen(false)} />}
+      {isLoginOpen && (
+        <LoginPopup
+          onClose={() => setIsLoginOpen(false)}
+          onSwitchToSignup={() => {
+            setIsLoginOpen(false);
+            setIsSignupOpen(true);
+          }}
+        />
+      )}
+
+      {/* Signup Popup */}
+      {isSignupOpen && <SignupPopup onClose={() => setIsSignupOpen(false)} />}
 
       {/* Notifications */}
       <div
