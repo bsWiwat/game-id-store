@@ -11,7 +11,11 @@ export async function GET(
 
     console.log("Fetching products for category:", categoryName);
     const productsRef = collection(db, "products");
-    const q = query(productsRef, where("categoryName", "==", categoryName));
+    const q = query(
+      productsRef,
+      where("categoryName", "==", categoryName),
+      where("isActive", "==", true)
+    );
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
@@ -33,8 +37,4 @@ export async function GET(
     );
   }
 }
-
-
-
-
 

@@ -37,6 +37,7 @@ export async function PATCH(
   try {
     const { id } = await params;
     const {
+      GameId: GameId,
       productName,
       price,
       imageUrls,
@@ -49,6 +50,7 @@ export async function PATCH(
     const docRef = doc(db, "products", id);
 
     await updateDoc(docRef, {
+      GameId: GameId,
       productName,
       price,
       imageUrls,
@@ -94,3 +96,5 @@ export async function DELETE(
     );
   }
 }
+
+

@@ -2,9 +2,18 @@ import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { useUser } from "@/context/UserContext";
 
-const LoginPopup = ({ onClose }: { onClose: () => void }) => {
+const LoginPopup = ({
+  onClose,
+  onSwitchToSignup,
+}: {
+  onClose: () => void;
+  onSwitchToSignup: () => void;
+}) => {
+  const { setUser } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -25,11 +34,29 @@ const LoginPopup = ({ onClose }: { onClose: () => void }) => {
       // Store userId in local storage or cookies
       document.cookie = `userId=${userId}; path=/`;
 
+      // Fetch user data from Firestore
+      const userDoc = await getDoc(doc(db, "users", userId));
+      if (userDoc.exists()) {
+        setUser({
+          uid: userId,
+          name: userDoc.data()?.name || "",
+          surname: userDoc.data()?.surname,
+          email: userDoc.data()?.email || "",
+          phone: userDoc.data()?.phone,
+          role: userDoc.data()?.role,
+        });
+      }
+
+      onClose();
       router.push("/"); // Redirect after login
-      // onClose();
-    } catch (err) {
-      console.error("Sign-in error:", err);
-      setError("Invalid email or password");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error("Sign-in error:", err);
+        setError(err.message || "Failed to sign-in an account");
+      } else {
+        console.error("Sign-in error:", err);
+        setError("Failed to sign-in an account");
+      }
     }
   };
   return (
@@ -74,6 +101,12 @@ const LoginPopup = ({ onClose }: { onClose: () => void }) => {
               Sign In
             </button>
           </form>
+          <div className="text-center mb-4">
+            Don&apos;t have an account?{" "}
+            <button onClick={onSwitchToSignup} className="text-yellow-600">
+              Sign Up
+            </button>
+          </div>
 
           <div className="text-center mb-4">or</div>
 

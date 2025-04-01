@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { email, password, role } = await req.json();
+    const { name, surname, phone, email, password, role } = await req.json();
 
     if (!email || !password) {
       return NextResponse.json(
@@ -21,10 +21,13 @@ export async function POST(req: Request) {
     );
     const user = userCredential.user;
 
-    // Store role in Firestore
     await setDoc(doc(db, "users", user.uid), {
+      name,
+      surname,
+      phone,
       email,
       role: role ?? "user",
+      isActive: true,
     });
 
     return NextResponse.json(
@@ -32,9 +35,8 @@ export async function POST(req: Request) {
       { status: 201 }
     );
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+    const errorMessage =
+      error instanceof Error ? error.message : "An unknown error occurred";
     return NextResponse.json({ error: errorMessage }, { status: 400 });
   }
 }
-
-

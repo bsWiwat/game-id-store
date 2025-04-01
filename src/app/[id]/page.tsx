@@ -8,14 +8,19 @@ import { Product } from "@/models/Product";
 import Link from "next/link";
 import LoginPopup from "@/components/LoginPopup";
 import useUserId from "@/hooks/useUserId";
+import SignupPopup from "@/components/SignupPopup";
+import { fetchCart } from "@/utils/fetchCart";
+import { useUser } from "@/context/UserContext";
 
 export default function ProductDetail() {
   const { id } = useParams();
   const [product, setProduct] = useState<Product | null>(null);
   const [productCategory, setProductCategory] = useState<Product[]>([]);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const userId: string | null = useUserId();
+  const { user } = useUser();
 
   const handleAddToCart = async () => {
     if (!userId) {
@@ -31,6 +36,7 @@ export default function ProductDetail() {
       });
 
       if (!res.ok) throw new Error("Failed to add product");
+      await fetchCart(userId || user?.uid || "");
     } catch (error) {
       console.error(error);
     }
@@ -58,7 +64,7 @@ export default function ProductDetail() {
       }
     };
     fetchData();
-  }, [id]);
+  }, [id, userId, user?.uid]);
 
   if (loading) {
     return <h1 className="text-center text-gray-500">Loading...</h1>;
@@ -126,8 +132,30 @@ export default function ProductDetail() {
       </div>
 
       {/* Popup Login */}
-      {isLoginOpen && <LoginPopup onClose={() => setIsLoginOpen(false)} />}
+      {isLoginOpen && (
+        <LoginPopup
+          onClose={() => {
+            setIsLoginOpen(false);
+            setIsSignupOpen(false);
+          }}
+          onSwitchToSignup={() => {
+            setIsLoginOpen(false);
+            setIsSignupOpen(true);
+          }}
+        />
+      )}
+
+      {/* Signup Popup */}
+      {isSignupOpen && (
+        <SignupPopup
+          onClose={() => setIsLoginOpen(true)}
+          onSwitchToSignin={() => {
+            setIsLoginOpen(true);
+            setIsSignupOpen(false);
+          }}
+        />
+      )}
     </>
   );
-
 }
+

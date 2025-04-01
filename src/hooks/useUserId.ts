@@ -15,4 +15,3 @@ const useUserId = () => {
 };
 
 export default useUserId;
-

@@ -5,7 +5,6 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Product } from "@/models/Product";
 import Image from "next/image";
-import Link from "next/link";
 
 const EditProduct = () => {
   const router = useRouter();
@@ -41,6 +40,7 @@ const EditProduct = () => {
     try {
       const docRef = doc(db, "products", id);
       await updateDoc(docRef, {
+        GameId: product.GameId,
         productName: product.productName,
         price: product.price,
         categoryName: product.categoryName,
@@ -125,6 +125,37 @@ const EditProduct = () => {
       {/* Edit Form */}
       <div className="mt-16 px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64">
         <h2 className="text-xl font-bold mb-4">Edit Product</h2>
+        <strong>Username Id</strong>
+        <input
+          type="text"
+          value={product.GameId?.usernameId || ""}
+          onChange={(e) =>
+            setProduct({
+              ...product,
+              GameId: {
+                ...product.GameId,
+                usernameId: e.target.value,
+              },
+            })
+          }
+          className="border p-2 w-full mb-2"
+        />
+        <strong>Password Id</strong>
+        <input
+          type="text"
+          value={product.GameId?.passwordId || ""}
+          onChange={(e) =>
+            setProduct({
+              ...product,
+              GameId: {
+                ...product.GameId,
+                passwordId: e.target.value,
+              },
+            })
+          }
+          className="border p-2 w-full mb-2"
+        />
+        <strong>Product Name</strong>
         <input
           type="text"
           value={product.productName}
@@ -133,6 +164,7 @@ const EditProduct = () => {
           }
           className="border p-2 w-full mb-2"
         />
+        <strong>Price</strong>
         <input
           type="number"
           value={product.price}
@@ -141,6 +173,7 @@ const EditProduct = () => {
           }
           className="border p-2 w-full mb-2"
         />
+        <strong>Category</strong>
         <input
           type="text"
           value={product.categoryName}
@@ -149,19 +182,21 @@ const EditProduct = () => {
           }
           className="border p-2 w-full mb-2"
         />
-        <input
-          type="text"
-          value={product.description}
-          onChange={(e) =>
-            setProduct({ ...product, description: e.target.value })
-          }
-          className="border p-2 w-full mb-2"
-        />
+        <strong>Short description</strong>
         <input
           type="text"
           value={product.shortDescription}
           onChange={(e) =>
             setProduct({ ...product, shortDescription: e.target.value })
+          }
+          className="border p-2 w-full mb-2"
+        />
+        <strong>Description</strong>
+        <input
+          type="text"
+          value={product.description}
+          onChange={(e) =>
+            setProduct({ ...product, description: e.target.value })
           }
           className="border p-2 w-full mb-2"
         />
@@ -177,3 +212,9 @@ const EditProduct = () => {
 };
 
 export default EditProduct;
+
+
+
+
+
+
