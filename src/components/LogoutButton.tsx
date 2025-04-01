@@ -5,7 +5,7 @@ import { useUser } from "@/context/UserContext";
 
 const LogoutButton = () => {
   const router = useRouter();
-  const {logout } = useUser();
+  const { logout } = useUser();
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -14,9 +14,14 @@ const LogoutButton = () => {
     router.push("/");
   };
 
-  return <button className="" onClick={handleLogout}>Logout</button>;
+  return (
+    <button
+      className="rounded-md bg-red-500 text-white p-2"
+      onClick={handleLogout}
+    >
+      Logout
+    </button>
+  );
 };
 
 export default LogoutButton;
-
-

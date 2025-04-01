@@ -17,7 +17,7 @@ const AboutUs: React.FC = () => {
           alt="Game ID Store Logo"
           width={200}
           height={200}
-          className="w-32 h-32 rounded-full shadow-lg mb-4"
+          className="w-64 h-64  mb-4"
         />
         <h1 className="text-4xl font-bold text-[#D99F2B]">
           Welcome to Game ID Store – The Best Market for Gamers!

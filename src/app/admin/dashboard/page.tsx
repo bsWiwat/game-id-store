@@ -91,27 +91,56 @@ const Dashboard = () => {
             {orders
               .sort(
                 (a, b) =>
-                  new Date(b.createdAt).getTime() -
-                  new Date(a.createdAt).getTime()
-              ) // 🔥 เรียง createdAt ใหม่ → เก่า
-              .slice(0, 5) // 🔥 เอาแค่ 5 รายการล่าสุด
-              .map((order) => (
-                <tr key={order.id} className="border">
-                  <td className="border p-2">{order.id}</td>
-                  <td className="border p-2">{order.userId}</td>
-                  <td className="border p-2">
-                    ฿ {order.totalAmount.toFixed(2)}
-                  </td>
-                  <td className="border p-2">{order.status}</td>
-                  <td className="border p-2">
-                    {order.createdAt
-                      ? new Date(
-                          order.createdAt.seconds * 1000
-                        ).toLocaleString() // ✅ Firestore Timestamp
-                      : "N/A"}
-                  </td>
-                </tr>
-              ))}
+                  new Date(b.createdAt.seconds * 1000).getTime() -
+                  new Date(a.createdAt.seconds * 1000).getTime()
+              ) // ✅ เรียงจากล่าสุด
+              .slice(0, 5) // ✅ แสดงแค่ 5 ออเดอร์ล่าสุด
+              .flatMap((order) =>
+                order.cartItems.map((cartItem: any, index: number) => (
+                  <tr key={`${order.id}-${cartItem.id}`} className="border">
+                    {index === 0 && (
+                      <>
+                        <td
+                          rowSpan={order.cartItems.length}
+                          className="border p-2"
+                        >
+                          {order.id}
+                        </td>
+                        <td
+                          rowSpan={order.cartItems.length}
+                          className="border p-2"
+                        >
+                          {order.userId}
+                        </td>
+                        <td
+                          rowSpan={order.cartItems.length}
+                          className="border p-2"
+                        >
+                          ฿ {order.totalAmount.toFixed(2)}
+                        </td>
+                        <td
+                          rowSpan={order.cartItems.length}
+                          className="border p-2"
+                        >
+                          {order.status}
+                        </td>
+                        <td
+                          rowSpan={order.cartItems.length}
+                          className="border p-2"
+                        >
+                          {new Date(
+                            order.createdAt.seconds * 1000
+                          ).toLocaleString()}
+                        </td>
+                      </>
+                    )}
+                    <td className="border p-2">{cartItem.productName}</td>
+                    <td className="border p-2">
+                      ฿ {cartItem.price.toFixed(2)}
+                    </td>
+                  </tr>
+                ))
+              )}
           </tbody>
         </table>
       </div>

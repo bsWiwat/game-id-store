@@ -2,14 +2,15 @@
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import CartModal from "./CartModal";
+import { useCart } from "@/context/CartContext";
 import { useNotification } from "@/components/NotificationContext";
 import LoginPopup from "./LoginPopup";
-import useUserId from "@/hooks/useUserId";
 import SignupPopup from "./SignupPopup";
-import UserProfile from "@/components/UserProfile";
 import { useUser } from "@/context/UserContext";
 import { fetchCart } from "@/utils/fetchCart";
-
+import LogoutButton from "@/components/LogoutButton";
+import { useRouter } from "next/navigation";
+import useUserId from "@/hooks/useUserId";
 const NavIcons = () => {
   const { user } = useUser();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -17,14 +18,14 @@ const NavIcons = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isNotiOpen, setIsNotiOpen] = useState(false);
-  const { notifications, markAsRead } = useNotification(); // ดึง markAsRead จาก useNotification
+  const { notifications, markAsRead } = useNotification();
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const userId = useUserId();
   const [cart, setCart] = useState([]);
 
   // ใช้ useRef เพื่อตรวจจับการคลิกนอก Notification
   const notiRef = useRef<HTMLDivElement>(null);
-
+  const router = useRouter();
   const handleProfileClick = () => {
     if (user) {
       setIsLoginOpen(false);
@@ -35,7 +36,6 @@ const NavIcons = () => {
     }
   };
 
-  // ตรวจจับการคลิกนอก Notification แล้วปิดมัน
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (notiRef.current && !notiRef.current.contains(event.target as Node)) {
@@ -45,8 +45,6 @@ const NavIcons = () => {
 
     if (isNotiOpen) {
       document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
@@ -54,34 +52,45 @@ const NavIcons = () => {
     };
   }, [isNotiOpen]);
 
-  // ใช้ useEffect เพื่อนับจำนวนการแจ้งเตือนที่ยังไม่ได้อ่าน
   useEffect(() => {
-    const unreadCount = notifications.filter((noti) => !noti.read).length;
-    setUnreadNotifications(unreadCount);
+    setUnreadNotifications(notifications.filter((noti) => !noti.read).length);
   }, [notifications]);
 
   useEffect(() => {
-    if (userId || user?.uid) {
-      fetchCart(userId || user?.uid || "").then(setCart);
+    if (userId) {
+      fetchCart(userId).then(setCart);
     }
   }, [userId, user?.uid]);
 
   return (
     <div className="flex items-center gap-4 xl:gap-6 relative">
-      {/* Profile Icon */}
       <Image
         src="/profile.png"
         alt="Profile"
         width={22}
         height={22}
         className="cursor-pointer"
-        onClick={() => handleProfileClick()}
+        onClick={handleProfileClick}
       />
-
-      {/* Profile Dropdown */}
-      {isProfileOpen && user && <UserProfile />}
-
-      {/* Login Popup */}
+      {isProfileOpen && user && (
+        <div className="absolute right-0 mt-36 w-48 bg-white border shadow-lg rounded-lg p-2">
+          <p
+            className="cursor-pointer p-2 hover:bg-gray-100"
+            onClick={() => router.push("/userpage")}
+          >
+            My Profile
+          </p>
+          {user.role === "admin" && (
+            <p
+              className="cursor-pointer p-2 hover:bg-gray-100"
+              onClick={() => router.push("/admin/dashboard")}
+            >
+              Admin Dashboard
+            </p>
+          )}
+          <LogoutButton />
+        </div>
+      )}
       {isLoginOpen && !user && (
         <LoginPopup
           onClose={() => {
@@ -94,8 +103,6 @@ const NavIcons = () => {
           }}
         />
       )}
-
-      {/* Signup Popup */}
       {isSignupOpen && !user && (
         <SignupPopup
           onClose={() => {
@@ -108,8 +115,6 @@ const NavIcons = () => {
           }}
         />
       )}
-
-      {/* Notifications */}
       <div
         className="relative cursor-pointer"
         onClick={() => setIsNotiOpen(!isNotiOpen)}
@@ -126,12 +131,10 @@ const NavIcons = () => {
           </div>
         )}
       </div>
-
-      {/* Notification Dropdown */}
       {isNotiOpen && (
         <div
           ref={notiRef}
-          className="absolute right-0 mt-2 translate-y-24 w-64 bg-white border shadow-lg rounded-lg p-2 transition-transform"
+          className="absolute right-0 mt-36 w-64 bg-white border shadow-lg rounded-lg p-2"
         >
           <h3 className="text-sm font-bold mb-2">Notifications</h3>
           {notifications.length === 0 ? (
@@ -144,7 +147,7 @@ const NavIcons = () => {
                   className={`border-b last:border-none py-1 ${
                     noti.read ? "text-gray-400" : "text-black"
                   }`}
-                  onClick={() => markAsRead(noti.id)} //คลิกข้อความเพื่อทำเครื่องหมายว่าอ่านแล้ว
+                  onClick={() => markAsRead(noti.id)}
                 >
                   🛒 {noti.message} <br />
                   <span className="text-gray-400 text-xs">
@@ -157,7 +160,6 @@ const NavIcons = () => {
         </div>
       )}
 
-      {/* Cart */}
       <div
         className="relative cursor-pointer"
         onClick={() => {
@@ -171,12 +173,9 @@ const NavIcons = () => {
           </div>
         )}
       </div>
-
-      {/* Cart Modal */}
       {isCartOpen && <CartModal userId={userId || ""} />}
     </div>
   );
 };
 
 export default NavIcons;
-
