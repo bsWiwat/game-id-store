@@ -8,6 +8,9 @@ import useUserId from "@/hooks/useUserId";
 import { useNotification } from "@/components/NotificationContext";
 import { useUser } from "@/context/UserContext";
 import CreditCardForm from "@/components/CreditCardForm";
+import { GameId } from "@/models/Product";
+import { sendOrderEmail } from "@/utils/sendEmail/sendOrderEmail";
+import { getDoc } from "firebase/firestore";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -17,6 +20,7 @@ export default function CheckoutPage() {
 
   const [cart, setCart] = useState<
     {
+      GameId: GameId;
       id: string;
       categoryName: string;
       shortDescription: string;
@@ -128,6 +132,31 @@ export default function CheckoutPage() {
           }),
         });
         if (!response.ok) throw new Error("Order failed");
+
+        const responseData = await response.json();
+        console.log("Order Response:", responseData);
+
+        if (!responseData.orderId) {
+          throw new Error("Order ID missing from response!");
+        }
+
+        const orderData = {
+          order_id: responseData.orderId,
+          email: formData.email,
+          orders: cart.map((item: any) => ({
+            usernameId: item.GameId.usernameId,
+            passwordId: item.GameId.passwordId,
+            image_url: item.coverImageUrl,
+            units: 1,
+            price: item.price,
+          })),
+          cost: {
+            discount: 0,
+            total: total,
+          },
+        };
+
+        sendOrderEmail(orderData);
       }
 
       addNotification(`Payment Success - Total: ฿${total.toFixed(2)}`);
@@ -298,3 +327,6 @@ export default function CheckoutPage() {
     </div>
   );
 }
+
+
+

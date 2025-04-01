@@ -25,12 +25,12 @@ const ContactPage = () => {
     e.preventDefault();
 
     try {
-      // ใช้ EmailJS ส่งอีเมล
-      const result = await emailjs.send(
-        "service_ua7rrzf", // ID ของ Service
-        "template_zj2dmxh", // ID ของ Template
+      // EmailJS sender
+      await emailjs.send(
+        process.env.NEXT_PUBLIC_EMAIL_KEY!, // ID Service
+        process.env.NEXT_PUBLIC_EMAIL_TEMPLATE!, // ID Template
         formData,
-        "ts6kTgA-XlW59KlJc" // ID ของ User
+        process.env.NEXT_PUBLIC_USER_PUBLIC_ID! // ID User
       );
 
       setFormStatus(
@@ -145,3 +145,8 @@ const ContactPage = () => {
 };
 
 export default ContactPage;
+
+
+
+
+
