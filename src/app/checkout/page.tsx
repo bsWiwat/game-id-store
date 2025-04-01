@@ -134,15 +134,10 @@ export default function CheckoutPage() {
         if (!response.ok) throw new Error("Order failed");
 
         const responseData = await response.json();
-        console.log("Order Response:", responseData);
-
-        if (!responseData.orderId) {
-          throw new Error("Order ID missing from response!");
-        }
 
         const orderData = {
           order_id: responseData.orderId,
-          email: formData.email,
+          email: "bs.wiwat@gmail.com",
           orders: cart.map((item: any) => ({
             usernameId: item.GameId.usernameId,
             passwordId: item.GameId.passwordId,
@@ -327,6 +322,7 @@ export default function CheckoutPage() {
     </div>
   );
 }
+
 
 
 
