@@ -115,7 +115,7 @@ export default function CheckoutPage() {
       }
 
       if (
-        formData.paymentMethod !== "credit-card" ||
+        formData.paymentMethod != "credit-card" ||
         (formData.paymentMethod === "credit-card" && creditCardRes?.ok)
       ) {
         // Place order
@@ -138,9 +138,9 @@ export default function CheckoutPage() {
           order_id: responseData.orderId,
           email: formData.email || user?.email,
           orders: cart.map((item: any) => ({
-            usernameId: item.GameId.usernameId,
-            passwordId: item.GameId.passwordId,
-            image_url: item.coverImageUrl,
+            usernameId: item.GameId.usernameId || userId,
+            passwordId: item.GameId.passwordId || userId,
+            image_url: item.coverImageUrl || "/logo.png",
             units: 1,
             price: item.price,
           })),
