@@ -17,7 +17,7 @@ export async function GET(
 
     // Map through the documents and extract data
     const orders = snapshot.docs.map((doc) => ({
-      id: doc.id,
+      orderId: doc.id,
       ...doc.data(),
     }));
 
