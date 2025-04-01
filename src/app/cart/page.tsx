@@ -22,7 +22,7 @@ export default function CartPage() {
         const userSnap = await getDoc(userRef);
 
         if (userSnap.exists()) {
-          setIsUserActive(userSnap.data().isActive);
+          setIsUserActive(userSnap.data().isActive ?? false);
         } else {
           setIsUserActive(false); // If user does not exist, consider them inactive
         }
