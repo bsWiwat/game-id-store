@@ -278,7 +278,7 @@ export default function CheckoutPage() {
                 />
                 <span>
                   ข้าพเจ้าได้อ่านและยอมรับ{" "}
-                  <Link href="/terms" className="text-blue-500 underline">
+                  <Link href="/term" className="text-blue-500 underline">
                     เงื่อนไขการใช้บริการ
                   </Link>
                   *
@@ -298,4 +298,3 @@ export default function CheckoutPage() {
     </div>
   );
 }
-

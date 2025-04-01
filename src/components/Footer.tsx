@@ -17,8 +17,6 @@ const Footer = () => {
                 height={180}
               />
             </Link>
-            {/* <span className="">gameId@gmai.com</span>
-            <span className="">+66 88-8888888</span> */}
             <div className="flex gap-6">
               <Image src="/facebook.png" alt="" width={16} height={16} />
               <Image src="/instagram.png" alt="" width={16} height={16} />
@@ -29,14 +27,13 @@ const Footer = () => {
           </div>
           {/* Center */}
           <div className="hidden lg:flex justify-between w-1/2">
-            <div className="flex flex-col justify-between">
+            <div className="flex flex-col gap-6">
               <h1 className="font-medium text-lg">COMPANY</h1>
-              <div className="flex flex-col gap-6">
-                <Link href="/about">About Us</Link>
-                <Link href="">Contact Us</Link>
-              </div>
+              <Link href="/about">About Us</Link>
+              <Link href="/contact">Contact Us</Link>
+              <div className="flex flex-col gap-6"></div>
             </div>
-            <div className="flex flex-col justify-between">
+            <div className="flex flex-col gap-6 ">
               <h1 className="font-medium text-lg">SHOP</h1>
               <div className="flex flex-col gap-6">
                 <Link href="/list">All Products</Link>
@@ -48,14 +45,13 @@ const Footer = () => {
                 <Link href="/list?category=Valorant">Valorant</Link>
               </div>
             </div>
-            <div className="flex flex-col justify-between">
+            <div className="flex flex-col gap-6">
               <h1 className="font-medium text-lg">HELP</h1>
               <div className="flex flex-col gap-6">
                 <Link href="">Customer Service</Link>
                 <Link href="/userpage">My Account</Link>
                 <Link href="/term">Terms & Condition</Link>
                 <Link href="/privacy">Legal & Privacy</Link>
-                <Link href="">Gift Card</Link>
               </div>
             </div>
           </div>

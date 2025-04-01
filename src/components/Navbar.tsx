@@ -40,7 +40,7 @@ const Navbar = () => {
               </Link>
               <Link href="/list">Shop</Link>
               <Link href="/about">About</Link>
-              <Link href="/">Contact</Link>
+              <Link href="/contact">Contact</Link>
             </div>
           </div>
           {/* Right */}
