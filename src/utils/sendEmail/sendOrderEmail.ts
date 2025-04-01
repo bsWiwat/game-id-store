@@ -6,12 +6,7 @@ export async function sendOrderEmail(orderData: any) {
     await emailjs.send(
       process.env.NEXT_PUBLIC_EMAIL_KEY!,
       "template_39njfe7",
-      {
-        order_id: orderData.order_id,
-        email: orderData.email,
-        orders: JSON.stringify(orderData.orders),
-        cost: JSON.stringify(orderData.cost),
-      },
+      orderData,
       process.env.NEXT_PUBLIC_USER_PUBLIC_ID!
     );
     console.log("Order confirmation email sent successfully!");
