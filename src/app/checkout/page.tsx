@@ -10,7 +10,6 @@ import { useUser } from "@/context/UserContext";
 import CreditCardForm from "@/components/CreditCardForm";
 import { GameId } from "@/models/Product";
 import { sendOrderEmail } from "@/utils/sendEmail/sendOrderEmail";
-import { getDoc } from "firebase/firestore";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -137,7 +136,7 @@ export default function CheckoutPage() {
 
         const orderData = {
           order_id: responseData.orderId,
-          email: "bs.wiwat@gmail.com",
+          email: formData.email || user?.email,
           orders: cart.map((item: any) => ({
             usernameId: item.GameId.usernameId,
             passwordId: item.GameId.passwordId,
@@ -322,7 +321,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
-
-
-
 
