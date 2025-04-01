@@ -7,7 +7,7 @@ export async function GET() {
     const querySnapshot = await getDocs(collection(db, "users"));
 
     const users = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
+      userId: doc.id,
       ...doc.data(),
     }));
 
