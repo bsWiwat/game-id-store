@@ -1,4 +1,5 @@
 export interface Product {
+  GameId: GameId;
   id: string;
   productName: string;
   imageUrls: string[];
@@ -9,6 +10,15 @@ export interface Product {
   description: string;
   isActive: boolean;
   createdAt: Date;
+}
+
+export interface CartItem extends Product {
+  quantity: number;
+}
+
+export interface GameId {
+  usernameId: string;
+  passwordId: string;
 }
 
 export interface CardProps {
@@ -23,3 +33,4 @@ export interface FilterProps {
   products: Product[];
   setFilteredProducts: (products: Product[]) => void;
 }
+

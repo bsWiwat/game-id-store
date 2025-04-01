@@ -4,26 +4,31 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { fetchCart } from "@/utils/fetchCart";
+import { db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 const CartModal = ({ userId }: { userId: string }) => {
-  const [cart, setCart] = useState<
-    {
-      id: string;
-      categoryName: string;
-      shortDescription: string;
-      description: string;
-      productName: string;
-      price: number;
-      coverImageUrl?: string;
-      imageUrls: string[];
-      createdAt: Date;
-      isActive: boolean;
-    }[]
-  >([]);
+  const [cart, setCart] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isUserActive, setIsUserActive] = useState(true); // Track user status
 
   useEffect(() => {
     if (userId) {
+      // Fetch the user's information, including their active status
+      const fetchUserStatus = async () => {
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          setIsUserActive(userSnap.data().isActive); // Set the user status based on the database
+        } else {
+          setIsUserActive(false); // If user does not exist, consider them inactive
+        }
+      };
+
+      fetchUserStatus();
+
+      // Fetch cart items
       fetchCart(userId)
         .then(setCart)
         .finally(() => setLoading(false));
@@ -92,8 +97,15 @@ const CartModal = ({ userId }: { userId: string }) => {
               </button>
             </Link>
             <Link href="/checkout">
-              <button className="rounded-md py-2 px-4 bg-black text-white">
-                Check Out
+              <button
+                className={`rounded-md py-2 px-4 ${
+                  isUserActive
+                    ? "bg-black text-white"
+                    : "bg-gray-500 text-gray-300"
+                }`}
+                disabled={!isUserActive}
+              >
+                {isUserActive ? "Check Out" : "Account Disabled"}
               </button>
             </Link>
           </div>
@@ -104,10 +116,3 @@ const CartModal = ({ userId }: { userId: string }) => {
 };
 
 export default CartModal;
-
-
-
-
-
-
-

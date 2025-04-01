@@ -1,4 +1,3 @@
-// app/api/products/[category]/route.ts
 import { db } from "@/lib/firebase"; // Adjust the import based on your project structure
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { NextResponse } from "next/server";

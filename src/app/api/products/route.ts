@@ -1,15 +1,17 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/firebase";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
 
 // GET: Retrieve all products
 export async function GET() {
   try {
-    const querySnapshot = await getDocs(collection(db, "products"));
-    const products = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+     const q = query(collection(db, "products"), where("isActive", "==", true));
+     const querySnapshot = await getDocs(q);
+
+     const products = querySnapshot.docs.map((doc) => ({
+       id: doc.id,
+       ...doc.data(),
+     }));
 
     return NextResponse.json(products, { status: 200 });
   } catch (error) {
@@ -25,6 +27,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const {
+      GameId: GameId,
       productName,
       price,
       coverImageUrl,
@@ -42,6 +45,7 @@ export async function POST(req: Request) {
     }
 
     await addDoc(collection(db, "products"), {
+      GameId : GameId,
       productName,
       price: parseFloat(price),
       coverImageUrl: coverImageUrl || "no-data",
@@ -65,3 +69,7 @@ export async function POST(req: Request) {
     );
   }
 }
+
+
+
+

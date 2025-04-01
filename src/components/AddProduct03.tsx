@@ -10,6 +10,8 @@ const AddProduct = ({ fetchProducts }: AddProductProps) => {
   const [imageUrls, setImageUrls] = useState<(File | string)[]>([]);
   const [coverImageUrl, setCoverImageUrl] = useState("");
   const [coverImageIndex, setCoverImageIndex] = useState<number | null>(null);
+  const [usernameId, setUsernameId] = useState("");
+  const [passwordId, setPasswordId] = useState("");
   const [productName, setProductName] = useState("");
   const [price, setPrice] = useState("");
   const [shortDescription, setShortDescription] = useState("");
@@ -98,6 +100,10 @@ const AddProduct = ({ fetchProducts }: AddProductProps) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          GameId: {
+            usernameId,
+            passwordId,
+          },
           productName,
           price,
           imageUrls,
@@ -112,6 +118,8 @@ const AddProduct = ({ fetchProducts }: AddProductProps) => {
       if (!response.ok) throw new Error("Failed to add product");
 
       alert("Product added successfully!");
+      setUsernameId("");
+      setPasswordId("");
       setProductName("");
       setPrice("");
       setShortDescription("");
@@ -131,6 +139,20 @@ const AddProduct = ({ fetchProducts }: AddProductProps) => {
 
   return (
     <div className="p-4 border rounded-lg">
+      <input
+        type="text"
+        placeholder="UsernameId"
+        value={usernameId}
+        onChange={(e) => setUsernameId(e.target.value)}
+        className="block border p-2 mb-2 w-full"
+      />
+      <input
+        type="text"
+        placeholder="PasswordId"
+        value={passwordId}
+        onChange={(e) => setPasswordId(e.target.value)}
+        className="block border p-2 mb-2 w-full"
+      />
       <input
         type="text"
         placeholder="Product Name"
@@ -269,3 +291,16 @@ const AddProduct = ({ fetchProducts }: AddProductProps) => {
 };
 
 export default AddProduct;
+
+
+
+
+
+
+
+
+
+
+
+
+

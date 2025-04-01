@@ -10,7 +10,11 @@ export default function Sidebar() {
     { name: "Dashboard", icon: <FaTachometerAlt />, path: "/admin" },
     { name: "Products", icon: <FaBox />, path: "/admin/productmanage" },
     { name: "Customers", icon: <FaUsers />, path: "/admin/customers" },
-    { name: "Settings", icon: <FaCog />, path: "/admin/settings" },
+    {
+      name: "Settings",
+      icon: <FaCog />,
+      path: "https://console.firebase.google.com/u/0/project/game-id-strore/overview?fb_gclid=Cj0KCQiAwtu9BhC8ARIsAI9JHanepppryX_MOrNheeutyKphn9gNE8DdDOoF_aPj0pynMb6-CVQbG-8aAkhREALw_wcB",
+    },
   ];
 
   return (
