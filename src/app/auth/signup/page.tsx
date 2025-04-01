@@ -17,9 +17,11 @@ export default function SignUp() {
         email,
         password
       );
-      await setDoc(doc(db, "users", userCredential.user.uid), { 
-        email, 
-        role: "user" });
+      await setDoc(doc(db, "users", userCredential.user.uid), {
+        email,
+        role: "user",
+        isActive: true,
+      });
       router.push("/");
     } catch (error) {
       console.error("Sign-up error:", error);
@@ -43,4 +45,3 @@ export default function SignUp() {
     </div>
   );
 }
-

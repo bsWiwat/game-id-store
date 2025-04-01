@@ -15,6 +15,7 @@ const Customers = () => {
         const userData = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
+          isActive: doc.data().isActive ?? true,
         }));
         setUsers(userData);
       } catch (error) {
@@ -27,13 +28,11 @@ const Customers = () => {
     fetchUsers();
   }, []);
 
-  // ✅ เปลี่ยนสถานะ isActive ของผู้ใช้
   const toggleUserStatus = async (userId: string, isActive: boolean) => {
     try {
       const userRef = doc(db, "users", userId);
-      await updateDoc(userRef, { isActive: !isActive }); // ✅ อัปเดตค่า `isActive` เป็น `boolean`
+      await updateDoc(userRef, { isActive: !isActive });
 
-      // ✅ อัปเดต state ทันที
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
           user.id === userId ? { ...user, isActive: !isActive } : user
@@ -93,10 +92,10 @@ const Customers = () => {
                     <button
                       onClick={() => toggleUserStatus(user.id, user.isActive)}
                       className={`px-3 py-1 rounded text-white ${
-                        user.isActive ? "bg-red-500" : "bg-green-500"
+                        user.role ? "bg-red-500" : "bg-green-500"
                       }`}
                     >
-                      {user.isActive ? "Disable" : "Enable"}
+                      {user.role ? "Disable" : "Enable"}
                     </button>
                   </td>
                 </tr>
