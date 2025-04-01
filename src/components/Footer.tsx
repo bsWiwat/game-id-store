@@ -48,7 +48,7 @@ const Footer = () => {
             <div className="flex flex-col gap-6">
               <h1 className="font-medium text-lg">HELP</h1>
               <div className="flex flex-col gap-6">
-                <Link href="">Customer Service</Link>
+                <Link href="/contact">Customer Service</Link>
                 <Link href="/userpage">My Account</Link>
                 <Link href="/term">Terms & Condition</Link>
                 <Link href="/privacy">Legal & Privacy</Link>
