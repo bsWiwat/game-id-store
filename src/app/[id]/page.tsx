@@ -9,6 +9,8 @@ import Link from "next/link";
 import LoginPopup from "@/components/LoginPopup";
 import useUserId from "@/hooks/useUserId";
 import SignupPopup from "@/components/SignupPopup";
+import { fetchCart } from "@/utils/fetchCart";
+import { useUser } from "@/context/UserContext";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -18,6 +20,7 @@ export default function ProductDetail() {
   const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const userId: string | null = useUserId();
+  const { user } = useUser();
 
   const handleAddToCart = async () => {
     if (!userId) {
@@ -33,6 +36,7 @@ export default function ProductDetail() {
       });
 
       if (!res.ok) throw new Error("Failed to add product");
+      await fetchCart(userId || user?.uid || "");
     } catch (error) {
       console.error(error);
     }
@@ -60,7 +64,7 @@ export default function ProductDetail() {
       }
     };
     fetchData();
-  }, [id]);
+  }, [id, userId, user?.uid]);
 
   if (loading) {
     return <h1 className="text-center text-gray-500">Loading...</h1>;
@@ -154,5 +158,4 @@ export default function ProductDetail() {
     </>
   );
 }
-
 

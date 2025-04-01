@@ -2,13 +2,13 @@
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import CartModal from "./CartModal";
-import { useCart } from "@/components/CartContext";
 import { useNotification } from "@/components/NotificationContext";
 import LoginPopup from "./LoginPopup";
 import useUserId from "@/hooks/useUserId";
 import SignupPopup from "./SignupPopup";
 import UserProfile from "@/components/UserProfile";
 import { useUser } from "@/context/UserContext";
+import { fetchCart } from "@/utils/fetchCart";
 
 const NavIcons = () => {
   const { user } = useUser();
@@ -17,10 +17,10 @@ const NavIcons = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isNotiOpen, setIsNotiOpen] = useState(false);
-  const { cart } = useCart();
   const { notifications, markAsRead } = useNotification(); // ดึง markAsRead จาก useNotification
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const userId = useUserId();
+  const [cart, setCart] = useState([]);
 
   // ใช้ useRef เพื่อตรวจจับการคลิกนอก Notification
   const notiRef = useRef<HTMLDivElement>(null);
@@ -59,6 +59,12 @@ const NavIcons = () => {
     const unreadCount = notifications.filter((noti) => !noti.read).length;
     setUnreadNotifications(unreadCount);
   }, [notifications]);
+
+  useEffect(() => {
+    if (userId || user?.uid) {
+      fetchCart(userId || user?.uid || "").then(setCart);
+    }
+  }, [userId, user?.uid]);
 
   return (
     <div className="flex items-center gap-4 xl:gap-6 relative">
@@ -154,7 +160,9 @@ const NavIcons = () => {
       {/* Cart */}
       <div
         className="relative cursor-pointer"
-        onClick={() => setIsCartOpen(!isCartOpen)}
+        onClick={() => {
+          setIsCartOpen(!isCartOpen);
+        }}
       >
         <Image src="/cart.png" alt="Cart" width={22} height={22} />
         {cart.length > 0 && (
@@ -171,3 +179,4 @@ const NavIcons = () => {
 };
 
 export default NavIcons;
+
