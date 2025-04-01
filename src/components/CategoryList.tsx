@@ -107,13 +107,13 @@ const CategoryList = () => {
     >
       {infiniteLogos.map((logo, index) => (
         <Link key={index} href={logo.link} className="flex-shrink-0">
-          <div className="relative bg-white min-w-[263px] min-h-[148px] outline outline-[#D99F2b] flex items-center justify-center">
+          <div className="relative bg-white  outline outline-[#D99F2b] flex items-center justify-center overflow-hidden">
             <Image
               src={logo.src}
               alt={logo.alt}
               width={263}
               height={148}
-              className="w-full h-auto max-w-[263px] max-h-[148px] object-cover"
+              className="w-auto h-auto object-contain"
               draggable="false"
             />
           </div>

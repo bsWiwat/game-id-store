@@ -15,6 +15,7 @@ const Footer = () => {
                 alt=""
                 width={180}
                 height={180}
+                className="object-cover w-180 h-180"
               />
             </Link>
             <div className="flex gap-6">
