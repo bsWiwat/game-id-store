@@ -2,7 +2,6 @@
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import CartModal from "./CartModal";
-import { useCart } from "@/context/CartContext";
 import { useNotification } from "@/components/NotificationContext";
 import LoginPopup from "./LoginPopup";
 import SignupPopup from "./SignupPopup";

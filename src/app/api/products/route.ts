@@ -27,6 +27,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const {
+      GameId: GameId,
       productName,
       price,
       coverImageUrl,
@@ -44,6 +45,7 @@ export async function POST(req: Request) {
     }
 
     await addDoc(collection(db, "products"), {
+      GameId : GameId,
       productName,
       price: parseFloat(price),
       coverImageUrl: coverImageUrl || "no-data",
@@ -67,5 +69,7 @@ export async function POST(req: Request) {
     );
   }
 }
+
+
 
 
