@@ -4,13 +4,25 @@ import { useUser } from "@/context/UserContext";
 import LogoutButton from "@/components/LogoutButton";
 import { db } from "@/lib/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
+import Image from "next/image";
 
 const UserPage = () => {
   const { user } = useUser();
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [phone, setPhone] = useState("");
-  const [orders, setOrders] = useState<any[]>([]);
+  interface Order {
+    id: string;
+    createdAt: { seconds: number };
+    cartItems: {
+      coverImageUrl?: string;
+      productName?: string;
+      categoryName?: string;
+      price?: number;
+    }[];
+  }
+
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -154,13 +166,15 @@ const UserPage = () => {
             </thead>
             <tbody>
               {orders.map((order) =>
-                order.cartItems.map((cartItem: any, index: number) => (
+                order.cartItems.map((cartItem: Order["cartItems"][number], index: number) => (
                   <tr key={`${order.id}-${index}`} className="border">
-                    <td className="border p-2 flex items-center justify-center">
-                      <img
+                    <td className="border p-2 flex items-center justify-center">                      
+                      <Image
                         src={cartItem.coverImageUrl || "/default-image.png"}
                         alt="Product"
-                        className="w-16 h-16 object-cover"
+                        width={64}
+                        height={64}
+                        className="object-cover"
                       />
                     </td>
                     <td className="border p-2">

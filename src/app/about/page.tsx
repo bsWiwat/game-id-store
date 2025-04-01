@@ -25,7 +25,7 @@ const AboutUs: React.FC = () => {
         <p className="text-lg max-w-3xl">
           At Game ID Store, we are passionate about gaming and dedicated to
           providing a safe, reliable, and convenient platform for gamers to buy
-          and sell game accounts. Whether you're looking for high-level
+          and sell game accounts. Whether you&#39;re looking for high-level
           accounts, exclusive in-game items, or simply a fresh start in your
           favorite game, we’ve got you covered!
         </p>
