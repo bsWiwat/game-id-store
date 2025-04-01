@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation"; // ใช้เพื่อดึงค่าจาก URL
 import Filter from "@/components/Filter";
 import ProductList from "@/components/ProductList";
 import Slider from "@/components/Slider";
@@ -9,11 +10,13 @@ import { Product } from "@/models/Product";
 const itemPerPage = 8;
 
 const ListPage = () => {
+  const searchParams = useSearchParams();
+  const query = searchParams.get("query")?.toLowerCase() || ""; // ดึง query จาก URL
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(true); // เพิ่ม state สำหรับโหลดข้อมูล
-  const [error, setError] = useState<string | null>(null); // เพิ่ม state สำหรับข้อผิดพลาด
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -35,6 +38,19 @@ const ListPage = () => {
     };
     fetchProducts();
   }, []);
+
+  useEffect(() => {
+    if (query) {
+      const filtered = products.filter(
+        (p) =>
+          p.productName.toLowerCase().includes(query) ||
+          p.categoryName.toLowerCase().includes(query)
+      );
+      setFilteredProducts(filtered);
+    } else {
+      setFilteredProducts(products);
+    }
+  }, [query, products]);
 
   useEffect(() => {
     setCurrentPage(1);

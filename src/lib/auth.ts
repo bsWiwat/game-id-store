@@ -15,10 +15,7 @@ export const signUp = async (
   });
 };
 
-export const signIn = async (
-  email: string,
-  password: string
-) => {
+export const signIn = async (email: string, password: string) => {
   return await fetch("/api/auth/signin", {
     method: "POST",
     body: JSON.stringify({ email, password }),
@@ -31,4 +28,3 @@ export const getUserRole = async (uid: string): Promise<UserRole | null> => {
   const docSnap = await getDoc(docRef);
   return docSnap.exists() ? (docSnap.data().role as UserRole) : null;
 };
-
