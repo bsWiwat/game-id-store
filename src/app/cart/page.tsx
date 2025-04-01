@@ -10,7 +10,15 @@ import { doc, getDoc } from "firebase/firestore";
 
 export default function CartPage() {
   const userId = useUserId();
-  const [cart, setCart] = useState<any[]>([]);
+  interface CartItem {
+    id: string;
+    productName: string;
+    categoryName: string;
+    price: number;
+    coverImageUrl?: string;
+  }
+
+  const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isUserActive, setIsUserActive] = useState(true); // Track user status
 

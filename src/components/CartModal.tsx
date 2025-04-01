@@ -8,7 +8,14 @@ import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 
 const CartModal = ({ userId }: { userId: string }) => {
-  const [cart, setCart] = useState<any[]>([]);
+  interface CartItem {
+    id: string;
+    productName: string;
+    price: number;
+    coverImageUrl?: string;
+  }
+
+  const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isUserActive, setIsUserActive] = useState(true); // Track user status
 

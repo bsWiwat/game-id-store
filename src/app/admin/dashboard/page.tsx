@@ -3,7 +3,22 @@ import { useEffect, useState } from "react";
 import { FaDollarSign, FaShoppingCart, FaBox } from "react-icons/fa";
 
 const Dashboard = () => {
-  const [orders, setOrders] = useState<any[]>([]);
+  interface CartItem {
+    id: string;
+    productName: string;
+    price: number;
+  }
+
+  interface Order {
+    cartItems: CartItem[];
+    orderId: string;
+    userId: string;
+    totalAmount: number;
+    status: string;
+    createdAt: { seconds: number };
+  }
+
+  const [orders, setOrders] = useState<Order[]>([]);
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalSales, setTotalSales] = useState(0);
   const [totalOrders, setTotalOrders] = useState(0);
@@ -89,58 +104,22 @@ const Dashboard = () => {
           </thead>
           <tbody>
             {orders
-              .sort(
-                (a, b) =>
-                  new Date(b.createdAt.seconds * 1000).getTime() -
-                  new Date(a.createdAt.seconds * 1000).getTime()
+              .sort((a, b) => 
+                new Date(b.createdAt.seconds * 1000).getTime() -
+                new Date(a.createdAt.seconds * 1000).getTime()
               ) // ✅ เรียงจากล่าสุด
               .slice(0, 5) // ✅ แสดงแค่ 5 ออเดอร์ล่าสุด
-              .flatMap((order) =>
-                order.cartItems.map((cartItem: any, index: number) => (
-                  <tr key={`${order.id}-${cartItem.id}`} className="border">
-                    {index === 0 && (
-                      <>
-                        <td
-                          rowSpan={order.cartItems.length}
-                          className="border p-2"
-                        >
-                          {order.orderId}
-                        </td>
-                        <td
-                          rowSpan={order.cartItems.length}
-                          className="border p-2"
-                        >
-                          {order.userId}
-                        </td>
-                        <td
-                          rowSpan={order.cartItems.length}
-                          className="border p-2"
-                        >
-                          ฿ {order.totalAmount.toFixed(2)}
-                        </td>
-                        <td
-                          rowSpan={order.cartItems.length}
-                          className="border p-2"
-                        >
-                          {order.status}
-                        </td>
-                        <td
-                          rowSpan={order.cartItems.length}
-                          className="border p-2"
-                        >
-                          {new Date(
-                            order.createdAt.seconds * 1000
-                          ).toLocaleString()}
-                        </td>
-                      </>
-                    )}
-                    <td className="border p-2">{cartItem.productName}</td>
-                    <td className="border p-2">
-                      ฿ {cartItem.price.toFixed(2)}
-                    </td>
-                  </tr>
-                ))
-              )}
+              .map((order) => (
+                <tr key={order.orderId} className="border">
+                  <td className="border p-2">{order.orderId}</td>
+                  <td className="border p-2">{order.userId}</td>
+                  <td className="border p-2">฿ {order.totalAmount.toFixed(2)}</td>
+                  <td className="border p-2">{order.status}</td>
+                  <td className="border p-2">
+                    {new Date(order.createdAt.seconds * 1000).toLocaleString()}
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>

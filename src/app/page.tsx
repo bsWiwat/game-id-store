@@ -5,6 +5,7 @@ import ProductList from "@/components/ProductList";
 import Slider from "@/components/Slider";
 import { Product } from "@/models/Product";
 import Link from "next/link";
+import Image from "next/image";
 
 const HomePage = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -43,9 +44,11 @@ const HomePage = () => {
             ))}
           </div>
         </div>
-        <img
+        <Image
           src="/About GameID.png"
           alt="aboutus"
+          width={1000}
+          height={1000}
           className="w-full h-auto opacity-100 mt-10"
         />
         <div className="mt-16 px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-32 ">
@@ -66,3 +69,5 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
+

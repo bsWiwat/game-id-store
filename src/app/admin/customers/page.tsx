@@ -5,7 +5,17 @@ import { db } from "@/lib/firebase";
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore"; // ✅ ใช้จาก `firebase/firestore`
 
 const Customers = () => {
-  const [users, setUsers] = useState<any[]>([]);
+  interface User {
+    id: string;
+    name?: string;
+    surname?: string;
+    phone?: string;
+    email?: string;
+    role?: string;
+    isActive: boolean;
+  }
+
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

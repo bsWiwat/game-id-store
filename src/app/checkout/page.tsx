@@ -9,7 +9,7 @@ import { useNotification } from "@/components/NotificationContext";
 import { useUser } from "@/context/UserContext";
 import CreditCardForm from "@/components/CreditCardForm";
 import { GameId } from "@/models/Product";
-import { sendOrderEmail } from "@/utils/sendEmail/sendOrderEmail";
+import emailjs from "emailjs-com";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -59,7 +59,7 @@ export default function CheckoutPage() {
         .then(setCart)
         .finally(() => setLoading(false));
     }
-  }, [userId || user?.uid]);
+  }, [user?.uid, userId]);
 
   const subtotal = cart.reduce((acc, item) => acc + item.price, 0);
   const total = subtotal;
@@ -135,22 +135,28 @@ export default function CheckoutPage() {
         const responseData = await response.json();
 
         const orderData = {
-          order_id: responseData.orderId,
-          email: formData.email || user?.email,
-          orders: cart.map((item: any) => ({
-            usernameId: item.GameId.usernameId || userId,
-            passwordId: item.GameId.passwordId || userId,
+          order_id: responseData.orderId || "",
+          email: formData.email || user?.email || "",
+          orders: cart.map((item) => ({
+            usernameId: item.GameId?.usernameId || "",
+            passwordId: item.GameId?.passwordId || "",
             image_url: item.coverImageUrl || "/logo.png",
             units: 1,
-            price: item.price,
+            price: item.price || 0,
           })),
           cost: {
             discount: 0,
-            total: total,
+            total: total || 0,
           },
         };
 
-        sendOrderEmail(orderData);
+        await emailjs.send(
+          process.env.NEXT_PUBLIC_EMAIL_KEY!,
+          "template_39njfe7",
+          orderData,
+          process.env.NEXT_PUBLIC_USER_PUBLIC_ID!
+        );
+
       }
 
       addNotification(`Payment Success - Total: ฿${total.toFixed(2)}`);
@@ -321,4 +327,6 @@ export default function CheckoutPage() {
     </div>
   );
 }
+
+
 
