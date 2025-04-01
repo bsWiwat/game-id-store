@@ -47,7 +47,7 @@ export async function GET(
         if (productData.isActive) {
           cartItems.push({
             id: productId,
-            ...productData, // Spread all product data
+            ...productData,
             createdAt: new Date(productData.createdAt.seconds * 1000),
           });
         }
@@ -58,7 +58,10 @@ export async function GET(
     return NextResponse.json(cartItems, { status: 200 });
   } catch (error) {
     console.error("Error fetching cart:", error);
-    return NextResponse.json({ error: "Failed to fetch cart" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch cart" },
+      { status: 500 }
+    );
   }
 }
 
@@ -152,10 +155,3 @@ export async function DELETE(
     );
   }
 }
-
-
-
-
-
-
-

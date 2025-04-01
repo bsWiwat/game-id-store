@@ -3,49 +3,42 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { fetchCart } from "@/utils/fetchCart";
 import { db } from "@/lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc, onSnapshot } from "firebase/firestore";
 
 const CartModal = ({ userId }: { userId: string }) => {
   const [cart, setCart] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isUserActive, setIsUserActive] = useState(true); // Track user status
+  const [isUserActive, setIsUserActive] = useState(true);
 
   useEffect(() => {
-    if (userId) {
-      // Fetch the user's information, including their active status
-      const fetchUserStatus = async () => {
-        const userRef = doc(db, "users", userId);
-        const userSnap = await getDoc(userRef);
+    if (!userId) return;
 
-        if (userSnap.exists()) {
-          setIsUserActive(userSnap.data().isActive); // Set the user status based on the database
-        } else {
-          setIsUserActive(false); // If user does not exist, consider them inactive
-        }
-      };
+    // Fetch user active status
+    const fetchUserStatus = async () => {
+      const userRef = doc(db, "users", userId);
+      const userSnap = await getDoc(userRef);
+      setIsUserActive(userSnap.exists() ? userSnap.data().isActive : false);
+    };
+    fetchUserStatus();
 
-      fetchUserStatus();
+    // Real-time listener for cart
+    const cartRef = collection(db, "users", userId, "cart");
+    const unsubscribe = onSnapshot(cartRef, (snapshot) => {
+      setCart(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+      setLoading(false);
+    });
 
-      // Fetch cart items
-      fetchCart(userId)
-        .then(setCart)
-        .finally(() => setLoading(false));
-    }
+    return () => unsubscribe(); // Cleanup listener
   }, [userId]);
 
   const removeFromCart = async (productId: string) => {
     try {
-      const response = await fetch(`/api/cart/${userId}`, {
+      await fetch(`/api/cart/${userId}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ productId }),
       });
-
-      if (response.ok) {
-        setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
-      }
     } catch (error) {
       console.error("Error removing item:", error);
     }
@@ -61,34 +54,32 @@ const CartModal = ({ userId }: { userId: string }) => {
         <div className="text-center text-gray-500">Your cart is empty</div>
       ) : (
         <div className="flex flex-col gap-4">
-          {cart.map((item) => {
-            return item ? (
-              <div key={item.id} className="flex gap-4">
-                <Image
-                  src={item.coverImageUrl || "/logo.png"}
-                  alt={item.id}
-                  width={64}
-                  height={80}
-                  className="object-cover rounded-md"
-                />
-                <div className="flex flex-col justify-between w-full">
-                  <div>
-                    <h3 className="font-semibold">{item.productName}</h3>
-                    <p className="text-sm text-[#D99F2B]">฿ {item.price}</p>
-                  </div>
-                  <button
-                    className="text-red-500 text-sm"
-                    onClick={() => removeFromCart(item.id)}
-                  >
-                    Remove
-                  </button>
+          {cart.map((item) => (
+            <div key={item.id} className="flex gap-4">
+              <Image
+                src={item.coverImageUrl || "/logo.png"}
+                alt={item.id}
+                width={64}
+                height={80}
+                className="object-cover rounded-md"
+              />
+              <div className="flex flex-col justify-between w-full">
+                <div>
+                  <h3 className="font-semibold">{item.productName}</h3>
+                  <p className="text-sm text-[#D99F2B]">฿ {item.price}</p>
                 </div>
+                <button
+                  className="text-red-500 text-sm"
+                  onClick={() => removeFromCart(item.id)}
+                >
+                  Remove
+                </button>
               </div>
-            ) : null;
-          })}
+            </div>
+          ))}
           <div className="flex justify-between font-semibold">
             <span>Subtotal</span>
-            <span>{cart.reduce((total, item) => total + item.price, 0)} ฿</span>
+            <span>฿{cart.reduce((total, item) => total + item.price, 0)}</span>
           </div>
           <div className="flex justify-between">
             <Link href="/cart">

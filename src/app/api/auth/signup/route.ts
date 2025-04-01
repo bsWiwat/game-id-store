@@ -21,14 +21,13 @@ export async function POST(req: Request) {
     );
     const user = userCredential.user;
 
-    // Store role in Firestore
     await setDoc(doc(db, "users", user.uid), {
       name,
       surname,
       phone,
       email,
       role: role ?? "user",
-      isActive: "true"
+      isActive: true,
     });
 
     return NextResponse.json(
@@ -41,4 +40,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: errorMessage }, { status: 400 });
   }
 }
-
