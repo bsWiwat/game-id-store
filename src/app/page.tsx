@@ -10,9 +10,8 @@ const HomePage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   useEffect(() => {
     const fetchProducts = async () => {
-      // const res = await fetch("/data/products.json");
       const res = await fetch("/api/products");
-      const data: Product[] = await res.json(); // กำหนดให้ data เป็นประเภท Product[]
+      const data: Product[] = await res.json();
       setProducts(data);
     };
     fetchProducts();
