@@ -1,5 +1,6 @@
 import { db } from "@/lib/firebase";
 import {
+  addDoc,
   collection,
   doc,
   getDocs,
@@ -33,6 +34,44 @@ export async function GET(
     console.error("Error fetching products:", error);
     return NextResponse.json(
       { error: "Failed to fetch products" },
+      { status: 500 }
+    );
+  }
+}
+
+// POST: new credit card
+export async function POST(
+  req: Request,
+  { params }: { params: { userId: string } }
+) {
+  try {
+    const { cardNumber, cardHolder, expiryDate, cvv } = await req.json();
+    const { userId } = await params;
+
+    if (!userId || !cardNumber || !cardHolder || !expiryDate || !cvv) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    await addDoc(collection(db, "creditCards"), {
+      userId: userId,
+      cardNumber,
+      cardHolder,
+      expiryDate,
+      cvv,
+      createdAt: new Date(),
+    });
+
+    return NextResponse.json(
+      { message: "Credit card added successfully!" },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("Error adding credit card:", error);
+    return NextResponse.json(
+      { error: "Failed to add credit card" },
       { status: 500 }
     );
   }
@@ -88,4 +127,5 @@ export async function PATCH(
     );
   }
 }
+
 

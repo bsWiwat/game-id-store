@@ -6,10 +6,14 @@ import Image from "next/image";
 import Link from "next/link";
 import useUserId from "@/hooks/useUserId";
 import { useNotification } from "@/components/NotificationContext";
+import { useUser } from "@/context/UserContext";
+import CreditCardForm from "@/components/CreditCardForm";
+
 export default function CheckoutPage() {
   const router = useRouter();
   const { addNotification } = useNotification();
   const userId = useUserId();
+  const { user } = useUser();
 
   const [cart, setCart] = useState<
     {
@@ -25,64 +29,106 @@ export default function CheckoutPage() {
       isActive: boolean;
     }[]
   >([]);
+
   const [loading, setLoading] = useState(true);
+  const [creditCard, setCreditCard] = useState<{
+    cardNumber: string;
+    cardHolder: string;
+    expiryDate: string;
+    cvv: string;
+  } | null>(null);
 
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    phone: "",
-    email: "",
+    firstName: user?.name || "",
+    lastName: user?.surname || "",
+    phone: user?.phone || "",
+    email: user?.email || "",
     discountCode: "",
     paymentMethod: "credit-card",
     termsAccepted: false,
   });
 
+  // Fetch cart data
   useEffect(() => {
-    if (userId) {
-      fetch(`/api/cart/${userId}`)
+    if (userId || user?.uid) {
+      fetch(`/api/cart/${userId || user?.uid}`)
         .then((res) => res.json())
         .then(setCart)
         .finally(() => setLoading(false));
     }
-  }, [userId]);
+  }, [userId || user?.uid]);
 
-  const subtotal = cart.reduce(
-    (acc, item) => acc + item.price,
-    0
-  );
+  const subtotal = cart.reduce((acc, item) => acc + item.price, 0);
   const total = subtotal;
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
-    const { name, value, type, checked } = e.target as HTMLInputElement;
+    const { name, value, type } = e.target as
+      | HTMLInputElement
+      | HTMLSelectElement
+      | HTMLTextAreaElement;
+    const checked =
+      type === "checkbox" && (e.target as HTMLInputElement).checked;
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (!formData.termsAccepted) {
       alert("กรุณายอมรับเงื่อนไขการใช้บริการ");
       return;
     }
 
-    try {
-      console.log("Placing order with data", cart, formData,  userId, total);
-      const response = await fetch(`/api/orders`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId,
-          cartItems: cart,
-          totalAmount: total,
-          paymentMethod: formData.paymentMethod.toString(),
-        }),
-      });
+    if (formData.paymentMethod === "credit-card" && !creditCard) {
+      alert("กรุณาเพิ่มบัตรเครดิตของคุณก่อนทำรายการ");
+      return;
+    }
 
-      if (!response.ok) throw new Error("Order failed");
+    try {
+      // Save credit card first
+      let creditCardId = null;
+      let creditCardRes = null;
+      if (formData.paymentMethod === "credit-card") {
+        creditCardRes = await fetch(`/api/payment/credit-card/${userId}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            cardNumber: creditCard?.cardNumber,
+            cardHolder: creditCard?.cardHolder,
+            expiryDate: creditCard?.expiryDate,
+            cvv: creditCard?.cvv,
+          }),
+        });
+
+        const creditCardData = await creditCardRes.json();
+        creditCardId = creditCardData?.id;
+      }
+
+      if (
+        formData.paymentMethod !== "credit-card" ||
+        (formData.paymentMethod === "credit-card" && creditCardRes?.ok)
+      ) {
+        // Place order
+        const response = await fetch(`/api/orders`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId,
+            cartItems: cart,
+            totalAmount: total,
+            paymentMethod: formData.paymentMethod,
+            creditCardId, // Send saved credit card ID
+          }),
+        });
+        if (!response.ok) throw new Error("Order failed");
+      }
 
       addNotification(`Payment Success - Total: ฿${total.toFixed(2)}`);
       router.push("/success");
@@ -199,6 +245,7 @@ export default function CheckoutPage() {
                 <span>฿{total.toFixed(2)}</span>
               </div>
 
+              {/* Payment Method */}
               <select
                 name="paymentMethod"
                 value={formData.paymentMethod}
@@ -210,6 +257,15 @@ export default function CheckoutPage() {
                 <option value="paypal">PayPal</option>
                 <option value="bank-transfer">Bank Transfer</option>
               </select>
+
+              {/* Credit Card Form */}
+              {formData.paymentMethod === "credit-card" && (
+                <CreditCardForm
+                  userId={userId || user?.uid || ""}
+                  creditCard={creditCard}
+                  onCardUpdate={setCreditCard}
+                />
+              )}
 
               <div className="flex items-center gap-2">
                 <input
@@ -242,5 +298,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
-
 
