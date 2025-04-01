@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { fetchCart } from "@/utils/fetchCart";
-import { useCart } from "@/context/CartContext";
 
 const CartModal = ({ userId }: { userId: string }) => {
   const [cart, setCart] = useState<
