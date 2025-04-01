@@ -104,7 +104,7 @@ const Dashboard = () => {
                           rowSpan={order.cartItems.length}
                           className="border p-2"
                         >
-                          {order.id}
+                          {order.orderId}
                         </td>
                         <td
                           rowSpan={order.cartItems.length}

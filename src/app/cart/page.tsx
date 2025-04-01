@@ -5,27 +5,32 @@ import Image from "next/image";
 import Link from "next/link";
 import useUserId from "@/hooks/useUserId";
 import { fetchCart } from "@/utils/fetchCart";
+import { db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 export default function CartPage() {
   const userId = useUserId();
-  const [cart, setCart] = useState<
-    {
-      id: string;
-      categoryName: string;
-      shortDescription: string;
-      description: string;
-      productName: string;
-      price: number;
-      coverImageUrl?: string;
-      imageUrls: string[];
-      createdAt: Date;
-      isActive: boolean;
-    }[]
-  >([]);
+  const [cart, setCart] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isUserActive, setIsUserActive] = useState(true); // Track user status
 
   useEffect(() => {
     if (userId) {
+      // Fetch the user's information, including their active status
+      const fetchUserStatus = async () => {
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          setIsUserActive(userSnap.data().isActive);
+        } else {
+          setIsUserActive(false); // If user does not exist, consider them inactive
+        }
+      };
+
+      fetchUserStatus();
+
+      // Fetch cart items
       fetchCart(userId)
         .then(setCart)
         .finally(() => setLoading(false));
@@ -82,15 +87,6 @@ export default function CartPage() {
                           objectFit="cover"
                           className="rounded-md"
                         />
-                        {item.coverImageUrl && (
-                          <Image
-                            src={item.coverImageUrl}
-                            alt={item.coverImageUrl}
-                            layout="fill"
-                            objectFit="cover"
-                            className="rounded-md"
-                          />
-                        )}
                       </div>
                       <span>{item.productName}</span>
                     </td>
@@ -127,8 +123,13 @@ export default function CartPage() {
               </div>
 
               <Link href="/checkout">
-                <button className="mt-4 w-full bg-[#D99F2B] text-white py-3 rounded-md text-lg font-bold">
-                  Proceed to Checkout
+                <button
+                  className={`mt-4 w-full ${
+                    isUserActive ? "bg-[#D99F2B]" : "bg-gray-500"
+                  } text-white py-3 rounded-md text-lg font-bold`}
+                  disabled={!isUserActive} // Disable the button if user is inactive
+                >
+                  {isUserActive ? "Proceed to Checkout" : "Account Disabled"}
                 </button>
               </Link>
             </div>

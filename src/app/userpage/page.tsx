@@ -68,9 +68,9 @@ const UserPage = () => {
   if (!user) return <p className="text-center mt-10">Please log in.</p>;
 
   return (
-    <div className="p-6 flex flex-col gap-6">
-      <h1 className="text-3xl font-bold text-[#D99F2B]">User Profile</h1>
-      <div className="bg-white p-6 rounded-md shadow">
+    <div className="p-6 grid grid-cols-1 md:grid-cols-4 gap-6">
+      {/* User Profile (25%) */}
+      <div className="md:col-span-1 bg-white p-6 rounded-md shadow">
         <h2 className="text-lg font-bold mb-4">Profile</h2>
         {isEditing ? (
           <div className="flex flex-col gap-4">
@@ -104,7 +104,7 @@ const UserPage = () => {
             </button>
             <button
               onClick={() => setIsEditing(false)}
-              className="bg-gray-500 text-white p-2 rounded mt-2"
+              className="bg-gray-500 text-white p-2 rounded mt-2 mb-4"
             >
               Cancel
             </button>
@@ -125,15 +125,19 @@ const UserPage = () => {
             </p>
             <button
               onClick={() => setIsEditing(true)}
-              className="bg-blue-500 text-white p-2 rounded mt-4 mb-4"
+              className="bg-blue-500 text-white p-2 rounded mt-4 mb-4 w-full"
             >
               Edit Profile
             </button>
           </div>
         )}
-        <LogoutButton />
+        <div className="flex justify-center">
+          <LogoutButton />
+        </div>
       </div>
-      <div className="bg-white p-6 rounded-md shadow">
+
+      {/* Order History (75%) */}
+      <div className="md:col-span-3 bg-white p-6 rounded-md shadow">
         <h2 className="text-lg font-bold mb-4">History</h2>
         {orders.length === 0 ? (
           <p>No orders found.</p>

@@ -73,22 +73,24 @@ const NavIcons = () => {
         onClick={handleProfileClick}
       />
       {isProfileOpen && user && (
-        <div className="absolute right-0 mt-36 w-48 bg-white border shadow-lg rounded-lg p-2">
+        <div className="absolute right-0 mt-36 w-48 bg-white border shadow-lg rounded-lg p-2 flex flex-col items-center">
           <p
-            className="cursor-pointer p-2 hover:bg-gray-100"
+            className="cursor-pointer p-2 hover:bg-gray-100 w-full text-center"
             onClick={() => router.push("/userpage")}
           >
             My Profile
           </p>
           {user.role === "admin" && (
             <p
-              className="cursor-pointer p-2 hover:bg-gray-100"
+              className="cursor-pointer p-2 hover:bg-gray-100 w-full text-center"
               onClick={() => router.push("/admin/dashboard")}
             >
               Admin Dashboard
             </p>
           )}
-          <LogoutButton />
+          <div className="w-full flex justify-center">
+            <LogoutButton />
+          </div>
         </div>
       )}
       {isLoginOpen && !user && (

@@ -11,6 +11,7 @@ interface User {
   phone?: string;
   surname?: string;
   role?: string;
+  isActive?: boolean;
 }
 
 interface UserContextProps {
@@ -58,4 +59,3 @@ export const useUser = () => {
   }
   return context;
 };
-
