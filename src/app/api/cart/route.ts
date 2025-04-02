@@ -1,49 +1,66 @@
 import { db } from "@/lib/firebase";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+} from "firebase/firestore";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
-  interface CartItem {
-    productId: string;
-  }
-
-  interface Product {
-    id: string;
-    isActive: boolean;
-    [key: string]: unknown; // Allow additional properties
-  }
-
+export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const userId = searchParams.get("userId");
+    const url = new URL(request.url);
+    const userId = url.searchParams.get("userId");
 
     if (!userId) {
       return NextResponse.json(
-        { error: "User ID is required" },
+        { message: "User ID is required." },
         { status: 400 }
       );
     }
 
-    const cartRef = doc(db, "carts", userId);
-    const cartSnap = await getDoc(cartRef);
+    console.log("Fetching cart for user:", userId);
 
-    if (!cartSnap.exists()) {
-      return NextResponse.json({ items: [] }, { status: 200 });
+    const cartsCollection = collection(db, "carts");
+    const q = query(cartsCollection, where("userId", "==", userId));
+    const docSnap = await getDocs(q);
+
+    if (docSnap.empty) {
+      return NextResponse.json(
+        { message: "No cart found for this user." },
+        { status: 404 }
+      );
     }
 
-    const cartData = cartSnap.data();
+    const cartItems = [];
 
-    const productIds = cartData.items.map((item: CartItem) => item.productId);
+    for (const doc of docSnap.docs) {
+      const products = doc.data().products || [];
 
-    // Fetch product details
-    const productsRef = collection(db, "products");
-    const productSnaps = await getDocs(productsRef);
+      for (const productId of products) {
+        const baseUrl = request.url.split("/api")[0];
+        const res = await fetch(`${baseUrl}/api/products?id=${productId}`);
+        if (!res.ok) continue;
 
-    const products = productSnaps.docs
-      .map((doc) => ({ id: doc.id, ...doc.data() } as Product))
-      .filter((product) => productIds.includes(product.id) && product.isActive);
+        const productData = await res.json();
+        if (productData.isActive) {
+          cartItems.push({
+            id: productId,
+            ...productData,
+            createdAt: new Date(productData.createdAt.seconds * 1000),
+          });
+        }
+      }
+    }
 
-    return NextResponse.json({ items: products }, { status: 200 });
+    console.log("Cart document data:", cartItems);
+    return NextResponse.json(cartItems, { status: 200 });
   } catch (error) {
     console.error("Error fetching cart:", error);
     return NextResponse.json(
@@ -54,3 +71,85 @@ export async function GET(req: Request) {
 }
 
 
+export async function POST(req: Request) {
+  try {
+    const { userId, productId } = await req.json(); // Extract userId and productId from request body
+
+    // Validate input
+    if (!userId || !productId) {
+      return NextResponse.json(
+        { error: "User ID and Product ID are required" },
+        { status: 400 }
+      );
+    }
+
+    // Fetch product data to check if it's active
+    const productRef = doc(db, "products", productId);
+    const productSnap = await getDoc(productRef);
+
+    if (!productSnap.exists() || !productSnap.data().isActive) {
+      return NextResponse.json(
+        { error: "Product is not active or does not exist" },
+        { status: 400 }
+      );
+    }
+
+    // Reference the user's cart
+    const cartRef = doc(db, "carts", userId);
+    const cartSnap = await getDoc(cartRef);
+
+    if (!cartSnap.exists()) {
+      // Create a new cart if it doesn't exist
+      await setDoc(cartRef, { userId, products: [productId] });
+    } else {
+      // Update the existing cart
+      await updateDoc(cartRef, {
+        products: arrayUnion(productId), // Add productId to the array
+      });
+    }
+
+    return NextResponse.json(
+      { message: "Cart updated successfully!" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error updating cart:", error);
+    return NextResponse.json(
+      { error: "Failed to update cart" },
+      { status: 500 }
+    );
+  }
+
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const { userId, productId } = await req.json(); // Extract userId and productId from request body
+
+    // Validate input
+    if (!userId || !productId) {
+      return NextResponse.json(
+        { error: "User ID and Product ID are required" },
+        { status: 400 }
+      );
+    }
+
+    // Update the user's cart (remove productId from the array)
+    const cartRef = doc(db, "carts", userId);
+    await updateDoc(cartRef, {
+      products: arrayRemove(productId), // Remove productId from the array
+    });
+
+    return NextResponse.json(
+      { message: "Product removed from cart successfully!" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error removing product from cart:", error);
+    return NextResponse.json(
+      { error: "Failed to remove product from cart" },
+      { status: 500 }
+    );
+  }
+
+}

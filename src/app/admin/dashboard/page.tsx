@@ -3,7 +3,17 @@ import { useEffect, useState } from "react";
 import { FaDollarSign, FaShoppingCart, FaBox } from "react-icons/fa";
 
 const Dashboard = () => {
-  const [orders, setOrders] = useState<any[]>([]);
+  interface Order {
+    id: string;
+    orderId: string;
+    userId: string;
+    totalAmount: number;
+    status: string;
+    createdAt: { seconds: number };
+    cartItems: { id: string; productName: string; price: number }[];
+  }
+
+  const [orders, setOrders] = useState<Order[]>([]);
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalSales, setTotalSales] = useState(0);
   const [totalOrders, setTotalOrders] = useState(0);
@@ -96,7 +106,7 @@ const Dashboard = () => {
               ) // ✅ เรียงจากล่าสุด
               .slice(0, 5) // ✅ แสดงแค่ 5 ออเดอร์ล่าสุด
               .flatMap((order) =>
-                order.cartItems.map((cartItem: any, index: number) => (
+                order.cartItems.map((cartItem, index: number) => (
                   <tr key={`${order.id}-${cartItem.id}`} className="border">
                     {index === 0 && (
                       <>

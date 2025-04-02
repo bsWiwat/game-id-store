@@ -1,19 +1,32 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Filter from "@/components/Filter";
 import ProductList from "@/components/ProductList";
 import Slider from "@/components/Slider";
 import Pagination from "@/components/Pagination";
 import { Product } from "@/models/Product";
+import { useSearchParams } from "next/navigation";
 
 const itemPerPage = 8;
 
 const ListPage = () => {
+  return (
+    <Suspense
+      fallback={<p className="text-gray-500 text-center">Loading page...</p>}
+    >
+      <PageContent />
+    </Suspense>
+  );
+};
+
+const PageContent = () => {
+  const searchParams = useSearchParams();
+  const query = searchParams.get("query")?.toLowerCase() || "";
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(true); // เพิ่ม state สำหรับโหลดข้อมูล
-  const [error, setError] = useState<string | null>(null); // เพิ่ม state สำหรับข้อผิดพลาด
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -37,6 +50,19 @@ const ListPage = () => {
   }, []);
 
   useEffect(() => {
+    if (query) {
+      const filtered = products.filter(
+        (p) =>
+          p.productName.toLowerCase().includes(query) ||
+          p.categoryName.toLowerCase().includes(query)
+      );
+      setFilteredProducts(filtered);
+    } else {
+      setFilteredProducts(products);
+    }
+  }, [query, products]);
+
+  useEffect(() => {
     setCurrentPage(1);
   }, [filteredProducts]);
 
@@ -50,7 +76,16 @@ const ListPage = () => {
     <>
       <Slider />
       <div className="px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-32 relative">
-        <Filter products={products} setFilteredProducts={setFilteredProducts} />
+        <Suspense
+          fallback={
+            <p className="text-gray-500 text-center">Loading filters...</p>
+          }
+        >
+          <Filter
+            products={products}
+            setFilteredProducts={setFilteredProducts}
+          />
+        </Suspense>
         <h1 className="mt-12 text-xl font-semibold mb-4">All Product List!</h1>
 
         {loading ? (

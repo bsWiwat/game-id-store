@@ -9,7 +9,7 @@ import { useNotification } from "@/components/NotificationContext";
 import { useUser } from "@/context/UserContext";
 import CreditCardForm from "@/components/CreditCardForm";
 import { GameId } from "@/models/Product";
-import { sendOrderEmail } from "@/utils/sendEmail/sendOrderEmail";
+import emailjs from "emailjs-com";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -54,12 +54,12 @@ export default function CheckoutPage() {
   // Fetch cart data
   useEffect(() => {
     if (userId || user?.uid) {
-      fetch(`/api/cart/${userId || user?.uid}`)
+      fetch(`/api/cart?userId=${userId || user?.uid}`)
         .then((res) => res.json())
         .then(setCart)
         .finally(() => setLoading(false));
     }
-  }, [userId || user?.uid]);
+  }, [userId, user?.uid]);
 
   const subtotal = cart.reduce((acc, item) => acc + item.price, 0);
   const total = subtotal;
@@ -99,10 +99,11 @@ export default function CheckoutPage() {
       let creditCardId = null;
       let creditCardRes = null;
       if (formData.paymentMethod === "credit-card") {
-        creditCardRes = await fetch(`/api/payment/credit-card/${userId}`, {
+        creditCardRes = await fetch(`/api/payment/credit-card`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+            userId: userId || user?.uid || "",
             cardNumber: creditCard?.cardNumber,
             cardHolder: creditCard?.cardHolder,
             expiryDate: creditCard?.expiryDate,
@@ -137,7 +138,19 @@ export default function CheckoutPage() {
         const orderData = {
           order_id: responseData.orderId,
           email: formData.email || user?.email,
-          orders: cart.map((item: any) => ({
+          orders: cart.map((item: {
+            GameId: GameId;
+            id: string;
+            categoryName: string;
+            shortDescription: string;
+            description: string;
+            productName: string;
+            price: number;
+            coverImageUrl?: string;
+            imageUrls: string[];
+            createdAt: Date;
+            isActive: boolean;
+          }) => ({
             usernameId: item.GameId.usernameId || userId,
             passwordId: item.GameId.passwordId || userId,
             image_url: item.coverImageUrl || "/logo.png",
@@ -150,7 +163,12 @@ export default function CheckoutPage() {
           },
         };
 
-        sendOrderEmail(orderData);
+        await emailjs.send(
+          process.env.NEXT_PUBLIC_EMAIL_KEY!,
+          "template_39njfe7",
+          orderData,
+          process.env.NEXT_PUBLIC_USER_PUBLIC_ID!
+        );
       }
 
       addNotification(`Payment Success - Total: ฿${total.toFixed(2)}`);
@@ -321,4 +339,5 @@ export default function CheckoutPage() {
     </div>
   );
 }
+
 

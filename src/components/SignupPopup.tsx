@@ -45,6 +45,7 @@ const SignupPopup = ({ onClose, onSwitchToSignin }: SignupPopupProps) => {
         email,
         role: "user",
         createdAt: new Date(),
+        isActive: true,
       };
 
       await setDoc(doc(db, "users", userId), userData);
@@ -65,7 +66,7 @@ const SignupPopup = ({ onClose, onSwitchToSignin }: SignupPopupProps) => {
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white w-full max-w-2xl flex rounded-lg overflow-hidden relative">
         {/* Left Side - Signup Form */}
-        <div className="w-1.25/2 p-6 ">
+        <div className="w-2/3 p-6 ">
           <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
           <form onSubmit={handleSignUp}>
             <div className="grid grid-cols-2 gap-4 mb-4">
@@ -109,6 +110,7 @@ const SignupPopup = ({ onClose, onSwitchToSignin }: SignupPopupProps) => {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   className="w-full p-2 border rounded"
+                  maxLength={10}
                   required
                 />
               </div>
@@ -152,12 +154,12 @@ const SignupPopup = ({ onClose, onSwitchToSignin }: SignupPopupProps) => {
         </div>
 
         {/* Right Side - Banner */}
-        <div className="w-0.75/2 relative">
+        <div className="w-1/3 relative">
           <Image
             src="/Silde_Marvel.jpg"
             alt="Signup Banner"
-            width={400}
-            height={500}
+            width={64}
+            height={64}
             className="object-cover w-full h-full"
           />
         </div>
@@ -175,3 +177,5 @@ const SignupPopup = ({ onClose, onSwitchToSignin }: SignupPopupProps) => {
 };
 
 export default SignupPopup;
+
+

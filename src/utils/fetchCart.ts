@@ -1,7 +1,7 @@
 import { Product } from '@/models/Product';
 export const fetchCart = async (userId: string) => {
   try {
-    const response = await fetch(`/api/cart/${userId}`);
+    const response = await fetch(`/api/cart?userId=${userId}`);
     if (!response.ok) {
       throw new Error("Failed to fetch cart");
     }

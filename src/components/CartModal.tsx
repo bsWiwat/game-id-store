@@ -6,11 +6,20 @@ import Link from "next/link";
 import { fetchCart } from "@/utils/fetchCart";
 import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import { useUser } from "@/context/UserContext";
 
 const CartModal = ({ userId }: { userId: string }) => {
-  const [cart, setCart] = useState<any[]>([]);
+  interface CartItem {
+    id: string;
+    productName: string;
+    price: number;
+    coverImageUrl?: string;
+  }
+
+  const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isUserActive, setIsUserActive] = useState(true); // Track user status
+  const { user } = useUser();
 
   useEffect(() => {
     if (userId) {
@@ -37,10 +46,13 @@ const CartModal = ({ userId }: { userId: string }) => {
 
   const removeFromCart = async (productId: string) => {
     try {
-      const response = await fetch(`/api/cart/${userId}`, {
+      const response = await fetch(`/api/cart`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId }),
+        body: JSON.stringify({
+          userId: userId || user?.uid || "",
+          productId: productId,
+        }),
       });
 
       if (response.ok) {
@@ -116,3 +128,4 @@ const CartModal = ({ userId }: { userId: string }) => {
 };
 
 export default CartModal;
+

@@ -4,13 +4,25 @@ import { useUser } from "@/context/UserContext";
 import LogoutButton from "@/components/LogoutButton";
 import { db } from "@/lib/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
+import Image from "next/image";
 
 const UserPage = () => {
   const { user } = useUser();
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [phone, setPhone] = useState("");
-  const [orders, setOrders] = useState<any[]>([]);
+  interface Order {
+    id: string;
+    createdAt: { seconds: number };
+    cartItems: {
+      coverImageUrl?: string;
+      productName?: string;
+      categoryName?: string;
+      price?: number;
+    }[];
+  }
+
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -57,7 +69,7 @@ const UserPage = () => {
   // ✅ ดึง Order จาก API ตาม userId
   const fetchUserOrders = async (userId: string) => {
     try {
-      const res = await fetch(`/api/orders/${userId}`);
+      const res = await fetch(`/api/orders?userId=${userId}`);
       const data = await res.json();
       if (Array.isArray(data)) setOrders(data);
     } catch (error) {
@@ -77,21 +89,21 @@ const UserPage = () => {
             <label>Name</label>
             <input
               type="text"
-              value={name}
+              value={name || ""}
               onChange={(e) => setName(e.target.value)}
               className="w-full p-2 border rounded"
             />
             <label>Surname</label>
             <input
               type="text"
-              value={surname}
+              value={surname || ""}
               onChange={(e) => setSurname(e.target.value)}
               className="w-full p-2 border rounded"
             />
             <label>Phone</label>
             <input
               type="text"
-              value={phone}
+              value={phone || ""}
               onChange={(e) => setPhone(e.target.value)}
               className="w-full p-2 border rounded"
             />
@@ -154,31 +166,37 @@ const UserPage = () => {
             </thead>
             <tbody>
               {orders.map((order) =>
-                order.cartItems.map((cartItem: any, index: number) => (
-                  <tr key={`${order.id}-${index}`} className="border">
-                    <td className="border p-2 flex items-center justify-center">
-                      <img
-                        src={cartItem.coverImageUrl || "/default-image.png"}
-                        alt="Product"
-                        className="w-16 h-16 object-cover"
-                      />
-                    </td>
-                    <td className="border p-2">
-                      {order.createdAt
-                        ? new Date(
-                            order.createdAt.seconds * 1000
-                          ).toLocaleString()
-                        : "N/A"}
-                    </td>
-                    <td className="border p-2">
-                      {cartItem.productName || "N/A"}
-                    </td>
-                    <td className="border p-2">
-                      {cartItem.categoryName || "N/A"}
-                    </td>
-                    <td className="border p-2">฿ {cartItem.price || "0.00"}</td>
-                  </tr>
-                ))
+                order.cartItems.map(
+                  (cartItem: Order["cartItems"][number], index: number) => (
+                    <tr key={`${order.id}-${index}`} className="border">
+                      <td className="border p-2 flex items-center justify-center">
+                        <Image
+                          src={cartItem.coverImageUrl || "/default-image.png"}
+                          alt="Product"
+                          width={64}
+                          height={64}
+                          className="w-16 h-16 object-cover"
+                        />
+                      </td>
+                      <td className="border p-2">
+                        {order.createdAt
+                          ? new Date(
+                              order.createdAt.seconds * 1000
+                            ).toLocaleString()
+                          : "N/A"}
+                      </td>
+                      <td className="border p-2">
+                        {cartItem.productName || "N/A"}
+                      </td>
+                      <td className="border p-2">
+                        {cartItem.categoryName || "N/A"}
+                      </td>
+                      <td className="border p-2">
+                        ฿ {cartItem.price || "0.00"}
+                      </td>
+                    </tr>
+                  )
+                )
               )}
             </tbody>
           </table>
@@ -189,3 +207,6 @@ const UserPage = () => {
 };
 
 export default UserPage;
+
+
+

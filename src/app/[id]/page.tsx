@@ -29,10 +29,13 @@ export default function ProductDetail() {
     }
 
     try {
-      const res = await fetch(`/api/cart/${userId}`, {
+      const res = await fetch(`/api/cart`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId: product?.id }),
+        body: JSON.stringify({
+          userId: userId || user?.uid || "",
+          productId: product?.id,
+        }),
       });
 
       if (!res.ok) throw new Error("Failed to add product");
@@ -46,13 +49,13 @@ export default function ProductDetail() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/products/${id}`);
+        const response = await fetch(`/api/products?id=${id}`);
         const data: Product = await response.json();
         setProduct(data || null);
 
         // Fetch products based on category
         const productCategoryRes = await fetch(
-          `/api/products/category/${data.categoryName}`
+          `/api/products?categoryName=${data.categoryName}`
         );
         const categoryData: Product[] = await productCategoryRes.json();
         setProductCategory(categoryData || []);
@@ -158,4 +161,5 @@ export default function ProductDetail() {
     </>
   );
 }
+
 
