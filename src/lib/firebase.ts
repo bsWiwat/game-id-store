@@ -1,5 +1,4 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-// import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
@@ -17,16 +16,8 @@ const firebaseConfig = {
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-// let analytics;
-// if (typeof window !== "undefined") {
-//   analytics = getAnalytics(app);
-// }
-
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 export const googleProvider = new GoogleAuthProvider();
-// export { analytics };
 export default app;
-
-
