@@ -1,16 +1,16 @@
-import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation"; // เพิ่มตัวนี้
+import { useEffect, useState, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
 import { Product } from "@/models/Product";
 import { FilterProps } from "@/models/Product";
 
 const Filter = ({ products, setFilteredProducts }: FilterProps) => {
-  const searchParams = useSearchParams(); // อ่านค่า URL เช่น ?category=genshin
+  const searchParams = useSearchParams();
   const categoryFromURL = searchParams.get("category") || "";
 
   const [filters, setFilters] = useState({
     minPrice: "",
     maxPrice: "",
-    categoryName: categoryFromURL, // ใช้ค่าหมวดหมู่จาก URL ตอนโหลด
+    categoryName: categoryFromURL,
     sort: "",
   });
 
@@ -18,7 +18,6 @@ const Filter = ({ products, setFilteredProducts }: FilterProps) => {
     { id: string; categoryName: string }[]
   >([]);
 
-  // อัปเดตค่า categoryName ใน filter ถ้า URL เปลี่ยน
   useEffect(() => {
     setFilters((prevFilters) => ({
       ...prevFilters,
@@ -26,7 +25,6 @@ const Filter = ({ products, setFilteredProducts }: FilterProps) => {
     }));
   }, [categoryFromURL]);
 
-  // ดึงหมวดหมู่จาก API
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -40,18 +38,8 @@ const Filter = ({ products, setFilteredProducts }: FilterProps) => {
     fetchCategories();
   }, []);
 
-  // อัปเดตสินค้าเมื่อ filters เปลี่ยน
-  useEffect(() => {
-    filterProducts();
-  }, [filters, products]);
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
-  ) => {
-    setFilters({ ...filters, [e.target.name]: e.target.value });
-  };
-
-  const filterProducts = () => {
+  // **Wrap `filterProducts` inside `useCallback` to prevent re-creation**
+  const filterProducts = useCallback(() => {
     let filtered = [...products];
 
     const minPrice = parseFloat(filters.minPrice) || 0;
@@ -81,6 +69,17 @@ const Filter = ({ products, setFilteredProducts }: FilterProps) => {
     }
 
     setFilteredProducts(filtered);
+  }, [filters, products, setFilteredProducts]); // Dependencies for `useCallback`
+
+  // Now `useEffect` can safely include `filterProducts`
+  useEffect(() => {
+    filterProducts();
+  }, [filters, products, filterProducts]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+  ) => {
+    setFilters({ ...filters, [e.target.name]: e.target.value });
   };
 
   return (
@@ -102,7 +101,7 @@ const Filter = ({ products, setFilteredProducts }: FilterProps) => {
         />
         <select
           name="categoryName"
-          value={filters.categoryName} // ใช้ค่า category จาก state
+          value={filters.categoryName}
           onChange={handleChange}
           className="py-2 px-4 rounded-2xl text-xs font-medium bg-gray-100"
         >

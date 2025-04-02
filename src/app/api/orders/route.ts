@@ -1,12 +1,53 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/firebase";
-import { collection, addDoc, getDocs, doc, writeBatch } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  writeBatch,
+  query,
+  where,
+  getDoc,
+} from "firebase/firestore";
 
 // GET: Retrieve all orders
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const querySnapshot = await getDocs(collection(db, "orders"));
-    const orders = querySnapshot.docs.map((doc) => ({
+    const url = new URL(request.url);
+    const userId = url.searchParams.get("userId");
+    const orderId = url.searchParams.get("orderId");
+
+    const ordersCollection = collection(db, "orders");
+
+    let snapshot;
+    if (userId) {
+      // Fetch orders for a specific user
+      console.log("Fetching orders for user:", userId);
+      const q = query(ordersCollection, where("userId", "==", userId));
+      snapshot = await getDocs(q);
+    } else {
+      // Fetch all orders if no userId is provided
+      console.log("Fetching all orders");
+      snapshot = await getDocs(ordersCollection);
+    }
+
+    if (orderId) {
+      const docRef = doc(db, "orders", orderId);
+      const docSnap = await getDoc(docRef);
+
+      if (!docSnap.exists()) {
+        return NextResponse.json({ error: "order not found" }, { status: 404 });
+      }
+      
+      return NextResponse.json(
+        { id: docSnap.id, ...docSnap.data() },
+        { status: 200 }
+      );
+    }
+
+    // Map through the documents and extract data
+    const orders = snapshot.docs.map((doc) => ({
       orderId: doc.id,
       ...doc.data(),
     }));

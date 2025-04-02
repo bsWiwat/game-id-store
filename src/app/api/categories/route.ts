@@ -1,17 +1,47 @@
 import { db } from "@/lib/firebase";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
-const categoryCollection = collection(db, "categories");
-
 // GET: Fetch all categories
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const snapshot = await getDocs(categoryCollection);
+    const url = new URL(request.url);
+    const categoryName = url.searchParams.get("categoryName");
+
+    const categoriesCollection = collection(db, "categories");
+
+    if (categoryName) {
+      // Fetch a specific category by name
+      console.log("Fetching category:", categoryName);
+      const q = query(
+        categoriesCollection,
+        where("categoryName", "==", categoryName)
+      );
+      const snapshot = await getDocs(q);
+
+      if (snapshot.empty) {
+        return NextResponse.json(
+          { error: "Category not found" },
+          { status: 404 }
+        );
+      }
+
+      const categoryData = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      return NextResponse.json(categoryData[0], { status: 200 });
+    }
+
+    // Fetch all categories if no query parameter is provided
+    console.log("Fetching all categories");
+    const snapshot = await getDocs(categoriesCollection);
     const categories = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
+
     return NextResponse.json(categories, { status: 200 });
   } catch (error) {
     console.error("Error fetching categories:", error);
@@ -48,10 +78,4 @@ export async function POST(req: Request) {
     );
   }
 }
-
-
-
-
-
-
 

@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { db } from "@/lib/firebase";
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore"; // ✅ ใช้จาก `firebase/firestore`
+import { User } from "@/models/User";
 
 const Customers = () => {
-  const [users, setUsers] = useState<any[]>([]);
+
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

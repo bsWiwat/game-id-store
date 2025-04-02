@@ -1,6 +1,7 @@
 "use client";
 import { uploadImage } from "@/utils/uploadImage";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface AddProductProps {
   fetchProducts: () => void;
@@ -227,9 +228,11 @@ const AddProduct = ({ fetchProducts }: AddProductProps) => {
           className="block border border-gray-300 rounded-lg p-2 w-full"
         />
         {coverImageUrl && (
-          <img
+          <Image
             src={coverImageUrl}
             alt="Cover"
+            width={32}
+            height={32}
             className="mt-2 w-32 h-32 object-cover border"
           />
         )}
@@ -239,7 +242,9 @@ const AddProduct = ({ fetchProducts }: AddProductProps) => {
       <div className="flex flex-wrap">
         {imageUrls.map((img, index) => (
           <div key={index} className="relative">
-            <img
+            <Image
+              width={24}
+              height={24}
               src={typeof img === "string" ? img : URL.createObjectURL(img)}
               alt={`Uploaded Image ${index + 1}`}
               className={`w-24 h-24 object-cover m-2 border-2 ${

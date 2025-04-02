@@ -1,10 +1,11 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import Image from "next/image";
 import AddProduct from "@/components/AddProduct03";
 import Link from "next/link";
 import { Product } from "@/models/Product";
 import Filter from "@/components/Filter";
+
 const ProductManage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -34,7 +35,15 @@ const ProductManage = () => {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this product?")) return;
     try {
-      await fetch(`/api/products/${id}`, { method: "DELETE" });
+      await fetch(`/api/products`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: id,
+        }),
+      });
       setProducts(products.filter((product) => product.id !== id));
     } catch (error) {
       console.error("Error deleting product:", error);
@@ -46,8 +55,12 @@ const ProductManage = () => {
       <h1 className="text-2xl font-bold mb-4 text-[#D99F2B]">
         Product Management
       </h1>
-      <AddProduct fetchProducts={fetchProducts} />
-      <Filter products={products} setFilteredProducts={setFilteredProducts} />
+      <Suspense fallback={<p>Loading add product form...</p>}>
+        <AddProduct fetchProducts={fetchProducts} />
+      </Suspense>
+      <Suspense fallback={<p>Loading filters...</p>}>
+        <Filter products={products} setFilteredProducts={setFilteredProducts} />
+      </Suspense>
 
       {loading ? (
         <p>Loading products...</p>
@@ -104,3 +117,4 @@ const ProductManage = () => {
 };
 
 export default ProductManage;
+

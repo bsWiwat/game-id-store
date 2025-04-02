@@ -5,7 +5,9 @@ import { CardProps } from "@/models/Product";
 const ProductList: React.FC<CardProps> = ({ product }) => {
   // Ensure that product.imageUrls is defined and has at least one image
   const imageUrl =
-    product.coverImageUrl && product.coverImageUrl.length > 0 && product.isActive
+    product.coverImageUrl &&
+    product.coverImageUrl.length > 0 &&
+    product.isActive
       ? product.coverImageUrl
       : product.imageUrls.length > 0
       ? product.coverImageUrl
@@ -41,3 +43,4 @@ const ProductList: React.FC<CardProps> = ({ product }) => {
 };
 
 export default ProductList;
+

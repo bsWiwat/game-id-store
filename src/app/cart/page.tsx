@@ -7,10 +7,20 @@ import useUserId from "@/hooks/useUserId";
 import { fetchCart } from "@/utils/fetchCart";
 import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import { useUser } from "@/context/UserContext";
 
 export default function CartPage() {
   const userId = useUserId();
-  const [cart, setCart] = useState<any[]>([]);
+  const { user } = useUser();
+  interface CartItem {
+    id: string;
+    productName: string;
+    categoryName: string;
+    price: number;
+    coverImageUrl?: string;
+  }
+
+  const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isUserActive, setIsUserActive] = useState(true); // Track user status
 
@@ -39,10 +49,13 @@ export default function CartPage() {
 
   const removeFromCart = async (productId: string) => {
     try {
-      const response = await fetch(`/api/cart/${userId}`, {
+      const response = await fetch(`/api/cart`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId }),
+        body: JSON.stringify({
+          userId: userId || user?.uid || "",
+          productId: productId,
+        }),
       });
 
       if (response.ok) {
@@ -139,3 +152,4 @@ export default function CartPage() {
     </div>
   );
 }
+
